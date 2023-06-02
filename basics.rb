@@ -8,7 +8,7 @@ puts "#{first_name} #{last_name}"
 
 #Exercise 2; find digit in 1) thousands place 2) hundreds place 3) tens place 4) ones place
 
-num = 1234
+num = 4830
 
 thousands = num / 1000
 hundreds =  num % 1000 /100
