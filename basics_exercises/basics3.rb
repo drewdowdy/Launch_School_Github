@@ -9,5 +9,5 @@ movies = {
 }
 
 movies.each do |movie, year|
-    puts "#{movie} came out in #{year}"
+    puts "#{movie} = #{year} --> comes from hash"
 end
