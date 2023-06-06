@@ -61,4 +61,3 @@ puts num1 * num1
 print "#{num2} squared is "
 puts num2 * num2
 print "#{num3} squared is "
-puts num3 * num3
