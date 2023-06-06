@@ -6,7 +6,6 @@ puts "..."
 puts "Now you are #{age} years old."
 print "In ten years you will be "
 puts age + 10
-puts " years old."
 print "In twenty years you will be "
 puts age + 20
 print "In thirty years you will be "
