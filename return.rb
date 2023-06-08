@@ -25,3 +25,4 @@ puts returned_value3
 
 #Ruby ALWAYS returns the last line UNLESS there is an explicit 'return' before
 #So, in 'add_three3' the last line is ignored
+#However, if there's no 'return' it will return whatever is from the last line
