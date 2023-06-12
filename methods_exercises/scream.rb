@@ -8,3 +8,14 @@ end
 
 scream("Yippeeee")
     # => nil
+
+#when 'return' is explicitly invoked, Ruby exits the method
+
+def realscream(words)
+    words = words + "!!!!"
+    puts words
+end
+
+realscream("AHHHHH")
+
+#this prints to screen but still returns nil
