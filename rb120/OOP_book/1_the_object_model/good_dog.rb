@@ -43,20 +43,26 @@ end
 sparky = GoodDog.new('Sparky', '13in', '20lbs')
 sparky.speak("Arf!") # => Arf!
 sparky.yell('Woof!')
+
 # sparky.whisper('Bark?') 
 # in `<main>': undefined method `whisper' for #<GoodDog:0x000000010069e028 @name="Sparky", @height="13in", @weight="20lbs"> (NoMethodError)
+
 sparky.info
-puts ''
-puts "---GoodDog ancestors---"
-puts GoodDog.ancestors
 
 puts ''
 
 bob = HumanBeing.new('Bob', '6ft 2in', '145lbs')
 bob.speak('Hello!')  # => Hello!
 bob.yell('Get back here!')
-bob.whisper('WHAT THE HECK?')
+bob.whisper('PRETTY PLEASE?')
 bob.info
+puts 'Bob lost some weight!'
+bob.change_info('Bob', '6ft 2in', '140lbs')
+bob.info
+
 puts ''
 puts "---HumanBeing ancestors---"
 puts HumanBeing.ancestors
+puts ''
+puts "---GoodDog ancestors---"
+puts GoodDog.ancestors
