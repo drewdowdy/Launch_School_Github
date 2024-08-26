@@ -2,8 +2,9 @@ class MyCar
   attr_accessor :color
   attr_reader :year
 
-  @@miles = 32
-  @@gallons = 1
+  def self.milage(miles, gallons)
+    puts "Your car gets #{miles / gallons} miles per gallon."
+  end
 
   def initialize(y, c, m)
     @year = y
@@ -36,11 +37,7 @@ class MyCar
     self.color = paint
     puts "You spraypainted the car and now it's #{paint}."
   end
-
-  def self.milage(miles, gallons)
-    puts "Your car gets #{miles / gallons} miles per gallon."
-  end
 end
 
-corolla = MyCar.new(2024, 'red', 'Toyota Corolla')
+corolla = MyCar.new(2024, 'red', 'Toyota Corolla') # Don't need to create new instance
 MyCar.milage(32, 1)

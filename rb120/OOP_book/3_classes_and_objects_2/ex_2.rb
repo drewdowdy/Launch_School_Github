@@ -1,6 +1,11 @@
 class MyCar
   attr_accessor :color
   attr_reader :year
+  attr_reader :model
+
+  def self.milage(miles, gallons)
+    puts "Your car gets #{miles / gallons} miles per gallon."
+  end
 
   def initialize(y, c, m)
     @year = y
@@ -29,12 +34,15 @@ class MyCar
     puts "You stop the car and park."
   end
 
-  def spray_paint(paint) # modifies the color of the car
+  def spray_paint(paint)
     self.color = paint
     puts "You spraypainted the car and now it's #{paint}."
   end
+
+  def to_s # overrides the #to_s method invovoked by #puts
+    "It's a #{color} #{year} #{model}." # A more meaningful output rather than the instance id
+  end
 end
 
-subaru = MyCar.new(2011, 'red', 'Subaru Outback')
-subaru.spray_paint('neon green')
-puts subaru.color
+corolla = MyCar.new(2024, 'red', 'Toyota Corolla') 
+puts corolla
