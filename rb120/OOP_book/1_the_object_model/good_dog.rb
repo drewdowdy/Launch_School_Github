@@ -20,17 +20,16 @@ module Information
     self.height = h
     self.weight = w
   end
-
 end
 
 class GoodDog
   attr_accessor :name, :height, :weight
-  include Speak, Name
+  include Speak, Information
 end
 
 class HumanBeing
   attr_accessor :name, :height, :weight
-  include Speak, Name
+  include Speak, Information
 end
 
 sparky = GoodDog.new('Sparky', '13in', '20lbs')
