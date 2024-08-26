@@ -6,9 +6,8 @@ class Person
   end
 end
 
-bob = Person.new("Steve")
-bob.name = "Bob"
-
+# bob = Person.new("Steve")
+# bob.name = "Bob"
 # test.rb:9:in `<main>': undefined method `name=' for
 #<Person:0x007fef41838a28 @name="Steve"> (NoMethodError)
 
