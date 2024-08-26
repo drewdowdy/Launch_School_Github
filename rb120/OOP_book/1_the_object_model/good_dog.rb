@@ -43,6 +43,8 @@ end
 sparky = GoodDog.new('Sparky', '13in', '20lbs')
 sparky.speak("Arf!") # => Arf!
 sparky.yell('Woof!')
+# sparky.whisper('Bark?') 
+# in `<main>': undefined method `whisper' for #<GoodDog:0x000000010069e028 @name="Sparky", @height="13in", @weight="20lbs"> (NoMethodError)
 sparky.info
 puts ''
 puts "---GoodDog ancestors---"
