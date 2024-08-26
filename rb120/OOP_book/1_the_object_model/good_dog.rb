@@ -4,14 +4,16 @@ module Speak
   end
 end
 
-module Name
-  def initialize(name)
-    @name = name
+module Information
+  def initialize(n, h, w)
+    @name = n
+    @height = h
+    @weight = w
   end
-end
 
-class GoodDog
-  attr_accessor :name, :height, :weight
+  def info
+    puts "#{@name} is #{@height} tall and weighs #{@weight}."
+  end
 
   def change_info(n, h, w)
     self.name = n
@@ -19,28 +21,30 @@ class GoodDog
     self.weight = w
   end
 
-  def info
-    puts "#{@name} is #{@height} tall and weighs #{@weight}."
-  end
+end
 
+class GoodDog
+  attr_accessor :name, :height, :weight
   include Speak, Name
 end
 
 class HumanBeing
-  
+  attr_accessor :name, :height, :weight
   include Speak, Name
 end
 
-sparky = GoodDog.new("Sparky")
+sparky = GoodDog.new('Sparky', '13in', '20lbs')
 sparky.speak("Arf!") # => Arf!
+sparky.info
 puts ''
 puts "---GoodDog ancestors---"
 puts GoodDog.ancestors
 
 puts ''
 
-bob = HumanBeing.new("Bob")
-bob.speak("Hello!")  # => Hello!
+bob = HumanBeing.new('Bob', '6ft 2in', '145lbs')
+bob.speak('Hello!')  # => Hello!
+bob.info
 puts ''
 puts "---HumanBeing ancestors---"
 puts HumanBeing.ancestors
