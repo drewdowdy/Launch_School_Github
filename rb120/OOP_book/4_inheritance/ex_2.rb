@@ -3,6 +3,8 @@ class Vehicle
   attr_reader :year
   attr_reader :model
 
+  @@total_vehicles = 0 # `@@` indicates a class variable
+
   def self.milage(miles, gallons)
     puts "Your car gets #{miles / gallons} miles per gallon."
   end
@@ -13,6 +15,7 @@ class Vehicle
     @model = m
     @speed = 0
     puts "You got a new vehicle! It's a #{@color} #{@year} #{@model}! Congrats!"
+    @@total_vehicles += 1
   end
 
   def accelorate(number)
@@ -38,18 +41,22 @@ class Vehicle
     self.color = paint
     puts "You spraypainted the car and now it's #{paint}."
   end
+
+  def self.total_vehicles
+    puts "There are currently #{@@total_vehicles} vehicles in this program."
+  end
 end
 
-class MyCar < Vehicle # MyCar inherits behaviors from the Vehicle superclass
+class MyCar < Vehicle
   PASSENGER_NUM = 5
-
+  
   def to_s
     "The car is a #{color} #{year} #{model}."
   end
 end
 
-class MyTruck < Vehicle # MyTruck inherits behaviors from the Vehicle superclass
-  BED_SIZE = 61.5 # cubic feet
+class MyTruck < Vehicle
+  BED_SIZE = 61.5
 
   def to_s
     "The truck is a #{color} #{year} #{model}."
@@ -58,3 +65,5 @@ end
 
 car = MyCar.new(2022, 'dark green', 'Volkwagon Passat')
 truck = MyTruck.new(2024, 'gray', 'Dodge Ram')
+
+Vehicle.total_vehicles
