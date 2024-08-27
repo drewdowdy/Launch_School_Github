@@ -23,3 +23,4 @@ puts "Well done, Joe!" if joe.better_grade_than?(bob)
 puts "Well done, Bob!" if bob.better_grade_than?(joe)
 
 bob.grade
+# in `<main>': protected method `grade' called for #<Student:0x0000000102291258 @name="Bob", @grade=75> (NoMethodError)
