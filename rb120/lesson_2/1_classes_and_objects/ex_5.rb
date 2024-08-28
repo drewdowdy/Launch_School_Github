@@ -13,6 +13,10 @@ class Person
     "#{@first_name} #{@last_name}".strip
   end
 
+  def to_s
+    name
+  end
+
   private 
 
   def parse_name(name)
@@ -25,5 +29,8 @@ end
 bob = Person.new("Robert Smith")
 puts "The person's name is: #{bob}" # => The person's name is: #<Person:0x00000001010a1598>
 # => Interpolates the object ID information into the string.
-
 puts "The person's name is: #{bob.name}" # fixed
+
+
+# after adding #to_s method
+puts "The person's name is: #{bob}" # The person's name is: Robert Smith
