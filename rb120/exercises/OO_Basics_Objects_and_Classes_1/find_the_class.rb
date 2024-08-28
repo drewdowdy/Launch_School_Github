@@ -9,8 +9,8 @@ puts [1, 2, 3]
 # Integer
 # Array
 
-puts "Hello".class
-puts 5.class
-puts [1, 2, 3].class
+puts "Hello".class   # => String
+puts 5.class         # => Integer
+puts [1, 2, 3].class # => Array
 
 # invoke the #class method
