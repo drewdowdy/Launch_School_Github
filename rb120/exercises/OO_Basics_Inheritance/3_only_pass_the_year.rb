@@ -10,7 +10,7 @@ class Truck < Vehicle
   attr_reader :bed_type # create a getter method `#bed_type`
 
   def initialize(year, bed_type)
-    super(year) # only pass `year` to `Vehicle`
+    super(year)         # only pass `year` to `Vehicle`
     @bed_type = bed_type
   end
 end
