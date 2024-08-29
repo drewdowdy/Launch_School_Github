@@ -7,7 +7,7 @@ class Person
     puts @secret
   end
 
-  private
+  private # means that only within this class there is access
 
   attr_reader :secret
 end
