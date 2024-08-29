@@ -1,4 +1,4 @@
-module Towable    # create `Towable` module
+module Towable    # create `Towable` module with reserved word `module`
   def tow         # define method `#tow`
     puts 'I can tow a trailer!'
   end
