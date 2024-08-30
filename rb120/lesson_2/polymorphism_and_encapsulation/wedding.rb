@@ -38,12 +38,6 @@ class Musician
   end
 end
 
-george = Chef.new
-linda = Decorator.new
-stacy = Musician.new
-
-Wedding.prepare([george, linda, stacy]) 
-
 =begin
 
 1) `Wedding.prepare` passes array to the #prepare method in `Wedding` where `#each` is invoked on the array
