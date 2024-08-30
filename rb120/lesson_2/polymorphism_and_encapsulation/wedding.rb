@@ -44,6 +44,6 @@ end
 2) On each iteration of `#each`, `#prepare_wedding` is invoked on each person in the array
 3) Each class of the person has a `#prepare_wedding` method in their classes which invokes their own respective specific preparation method based on the class of the calling object.
 
-This is an example of polymorphic code since each of the people `george`, `linda`, and `stacy` are instances of different classes, but can all be passed to an invocation of #prepare and have their own independent outcomes.
+This is an example of polymorphic code since each person  is an instance of a different class but they can all be passed to the invocation of the same mathod.
 
 =end
