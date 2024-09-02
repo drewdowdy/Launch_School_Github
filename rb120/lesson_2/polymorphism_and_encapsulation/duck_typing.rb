@@ -1,3 +1,5 @@
+# The `type` in duck typing is about the types of objects, not typing on a keyboard.
+
 class Duck
   def quack
     puts "Quack!"
