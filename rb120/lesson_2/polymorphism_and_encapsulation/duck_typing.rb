@@ -3,6 +3,10 @@ class Duck
     puts "Quack!"
   end
 
+  def walk
+    puts "The duck waddles forward."
+  end
+
   def feathers
     puts "The duck has white and gray feathers."
   end
@@ -13,8 +17,12 @@ class Person
     puts "The person imitates a duck."
   end
 
+  def walk
+    puts "The person steps forward."
+  end
+
   def feathers
-    puts "The person picks up a feather and shows it."
+    puts "The person shows a white feather."
   end
 
   def name
@@ -24,8 +32,9 @@ end
 
 def in_the_forrest(duck)
   # These methods are duck typing because we don't have to specify which class's #quack or #feathers method we are referring to. Ruby understands that if we call #quack on an object with the ability to use a #quack method, then Ruby can invoke the method.
-  duck.quack 
-  duck.feathers 
+  duck.quack
+  duck.walk
+  duck.feathers
 end
 
 donald = Duck.new
@@ -33,8 +42,10 @@ john = Person.new
 
 [john, donald].each { |duck| in_the_forrest(duck) }
 # => The person imitates a duck.
-# => The person picks up a feather and shows it.
+# => The person steps forward.
+# => The person shows a white feather.
 # => Quack!
+# => The duck waddles forward.
 # => The duck has white and gray feathers.
 
 [john, donald].each { |duck| duck.name }
