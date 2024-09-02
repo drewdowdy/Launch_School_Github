@@ -31,4 +31,12 @@ end
 donald = Duck.new
 john = Person.new
 
-[donald, john].each { |duck| in_the_forrest(duck) }
+[john, donald].each { |duck| in_the_forrest(duck) }
+# => The person imitates a duck.
+# => The person picks up a feather and shows it.
+# => Quack!
+# => The duck has white and gray feathers.
+
+[john, donald].each { |duck| duck.name }
+# => John Smith    (the `Person` class has a `#name` method)
+# => NoMethodError (however, the `Duck` class does not have a `#name` method)
