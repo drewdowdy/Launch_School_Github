@@ -28,7 +28,7 @@ class Car
 
   def increment_mileage(miles)
     total = mileage + miles
-    self.mileage = total
+    self.mileage = total # invoke #mileage= on self
   end
 
   def print_mileage
