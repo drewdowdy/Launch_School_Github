@@ -8,11 +8,13 @@ end
 
 class Customer
   include Mailable # mix in the `Mailable` module
+
   attr_reader :name, :address, :city, :state, :zipcode
 end
 
 class Employee
   include Mailable # mix in the `Mailable` module
+  
   attr_reader :name, :address, :city, :state, :zipcode
 end
 
