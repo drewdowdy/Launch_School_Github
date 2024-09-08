@@ -17,3 +17,5 @@ end
 my_data = Transform.new('abc')
 puts my_data.uppercase          # => ABC
 puts Transform.lowercase('XYZ') # => xyz
+
+# class methods may also be called "singleton methods"
