@@ -17,12 +17,29 @@ The first player to 10 points is the ultimate winner.
 
 === ADD 'Lizard' AND `Spock` ===
 
-
+- Update the values of `VALUES` in the `Move` class
+- 
 
 =end
 
+class Score
+  attr_accessor :total
+
+  def initialize
+    @total = 0
+  end
+
+  def +(num)
+    @total += num
+  end
+
+  def to_s
+    @total.to_s
+  end
+end
+
 class Move
-  VALUES = ['rock', 'paper', 'scissors']
+  VALUES = ['rock', 'paper', 'scissors']  #,'lizard', 'spock'
 
   def initialize(value)
     @value = value
@@ -40,10 +57,30 @@ class Move
     @value == 'paper'
   end
 
+  def lizard?
+    @value == 'lizard'
+  end
+
+  def spock?
+    @value == 'spock'
+  end
+
   def >(other_move)
     (rock? && other_move.scissors?) ||
       (paper? && other_move.rock?) ||
       (scissors? && other_move.paper?)
+
+    # if rock?
+    #   other_move.lizard? || other_move.scissors?
+    # elsif paper?
+    #   other_move.spock? || other_move.rock?
+    # elsif scissors?
+    #   other_move.lizard? || other_move.paper?
+    # elsif lizard?
+    #   other_move.spock? || other_move.paper?
+    # elsif spock?
+    #   other_move.rock? || other_move.scissors?
+    # end
   end
 
   def <(other_move)
@@ -62,7 +99,7 @@ class Player
 
   def initialize
     set_name
-    @score = 0
+    @score = Score.new
   end
 end
 
@@ -114,13 +151,20 @@ class RPSGame
   end
 
   def display_welcome_message
-    puts "=== Welcome to Rock, Paper, Scissors! ==="
+    puts "=== Welcome to Rock, Paper, Scissors! ===".center(80)
+    puts "=== First player to 10 points is the ultimate winner! ===".center(80)
     sleep 0.5
   end
 
   def display_goodbye_message
     sleep 0.5
-    puts '=== Thank you for playing Rock, Paper, Scissors! ==='
+    if computer.score == 10
+      puts "=== #{computer.name} is the ultimate winner!! ===".center(80)
+    elsif human.score == 10
+      puts "=== #{human.name} is the ultimate winner!! ===".center(80)
+    end
+    sleep 0.5
+    puts '=== Thank you for playing Rock, Paper, Scissors! ==='.center(80)
   end
 
   def display_moves
@@ -159,14 +203,21 @@ class RPSGame
       human.score += 1
     elsif human.move < computer.move
       computer.score += 1
+    else
+      human.score += 1
+      computer.score += 1
     end
   end
 
   def display_scores
     sleep 0.5
-    puts "- #{human.name} has #{human.score} points."
+    puts "=== #{human.name} has #{human.score} points. ===".center(80)
     sleep 0.5
-    puts "- #{computer.name} has #{computer.score} points."
+    puts "=== #{computer.name} has #{computer.score} points. ===".center(80)
+  end
+
+  def ten_points?
+    human.score == 10 || computer.score == 10
   end
 
   def play
@@ -179,6 +230,7 @@ class RPSGame
       display_winner
       update_scores
       display_scores
+      break if ten_points?
       break unless play_again?
     end
 
