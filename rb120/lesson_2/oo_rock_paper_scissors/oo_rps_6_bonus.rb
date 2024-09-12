@@ -18,7 +18,7 @@ The first player to 10 points is the ultimate winner.
 === ADD 'Lizard' AND `Spock` ===
 
 - Update the values of `VALUES` in the `Move` class
-- 
+- Update the #> and #< with new logic
 
 =end
 
@@ -39,7 +39,7 @@ class Score
 end
 
 class Move
-  VALUES = ['rock', 'paper', 'scissors']  #,'lizard', 'spock'
+  VALUES = ['rock', 'paper', 'scissors', 'lizard', 'spock']
 
   def initialize(value)
     @value = value
@@ -66,27 +66,31 @@ class Move
   end
 
   def >(other_move)
-    (rock? && other_move.scissors?) ||
-      (paper? && other_move.rock?) ||
-      (scissors? && other_move.paper?)
-
-    # if rock?
-    #   other_move.lizard? || other_move.scissors?
-    # elsif paper?
-    #   other_move.spock? || other_move.rock?
-    # elsif scissors?
-    #   other_move.lizard? || other_move.paper?
-    # elsif lizard?
-    #   other_move.spock? || other_move.paper?
-    # elsif spock?
-    #   other_move.rock? || other_move.scissors?
-    # end
+    if rock?
+      other_move.lizard? || other_move.scissors?
+    elsif paper?
+      other_move.spock? || other_move.rock?
+    elsif scissors?
+      other_move.lizard? || other_move.paper?
+    elsif lizard?
+      other_move.spock? || other_move.paper?
+    elsif spock?
+      other_move.rock? || other_move.scissors?
+    end
   end
 
   def <(other_move)
-    (rock? && other_move.paper?) ||
-      (paper? && other_move.scissors?) ||
-      (scissors? && other_move.rock?)
+    if rock?
+      other_move.spock? || other_move.paper?
+    elsif paper?
+      other_move.lizard? || other_move.scissors?
+    elsif scissors?
+      other_move.spock? || other_move.rock?
+    elsif lizard?
+      other_move.rock? || other_move.scissors?
+    elsif spock?
+      other_move.lizard? || other_move.paper?
+    end
   end
 
   def to_s
@@ -121,7 +125,7 @@ class Human < Player
     choice = nil
 
     loop do
-      puts "- Choose rock, paper, or scissors:"
+      puts "- Choose rock, paper, scissors, lizard, or spock:"
       choice = gets.chomp
       break if Move::VALUES.include?(choice)
       puts "- Invalid choice."
