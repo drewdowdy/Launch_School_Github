@@ -13,7 +13,11 @@ The first player to 10 points is the ultimate winner.
 - Creating `Score` class objects will allow us to more easily implement scores between the human player and the computer player.
 - A `Score` class can also contain methods related to updating the score.
 
-- However, it could be more straightforward to created 
+- However, it could be more straightforward to creat a instance variable `score` in the `Player` class that can be updated depending on the winner
+
+=== ADD 'Lizard' AND `Spock` ===
+
+
 
 =end
 
@@ -54,10 +58,11 @@ class Move
 end
 
 class Player
-  attr_accessor :move, :name
+  attr_accessor :move, :name, :score
 
   def initialize
     set_name
+    @score = 0
   end
 end
 
@@ -149,6 +154,21 @@ class RPSGame
     again == 'y'
   end
 
+  def update_scores
+    if human.move > computer.move
+      human.score += 1
+    elsif human.move < computer.move
+      computer.score += 1
+    end
+  end
+
+  def display_scores
+    sleep 0.5
+    puts "- #{human.name} has #{human.score} points."
+    sleep 0.5
+    puts "- #{computer.name} has #{computer.score} points."
+  end
+
   def play
     display_welcome_message
 
@@ -157,6 +177,8 @@ class RPSGame
       computer.choose
       display_moves
       display_winner
+      update_scores
+      display_scores
       break unless play_again?
     end
 
