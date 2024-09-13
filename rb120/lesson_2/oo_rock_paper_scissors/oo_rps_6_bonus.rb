@@ -20,6 +20,13 @@ The first player to 10 points is the ultimate winner.
 - Update the values of `VALUES` in the `Move` class
 - Update the #> and #< with new logic
 
+=== ADD CLASS FOR EACH MOVE ===
+
+- What information does each class need to have?
+  - Each class can determine winners and losers against itself
+- Could simplify and remove the #> and #< methods
+- Maybe the moves are all subclasses of `Move`
+
 =end
 
 class Score
@@ -39,62 +46,106 @@ class Score
 end
 
 class Move
+  attr_accessor :value
+
   VALUES = ['rock', 'paper', 'scissors', 'lizard', 'spock']
 
   def initialize(value)
-    @value = value
+    set_value(value)
+  end
+
+  def set_value(value)
+    case value
+    when 'rock' then self.value = Rock.new
+    when 'paper' then self.value = Paper.new
+    when 'scissors' then self.value = Scissors.new
+    when 'lizard' then self.value = Lizard.new
+    when 'spock' then self.value = Spock.new
+    end
   end
 
   def scissors?
-    @value == 'scissors'
+    @value.class == 'Scissors'
   end
 
   def rock?
-    @value == 'rock'
+    @value.class == 'Rock'
   end
 
   def paper?
-    @value == 'paper'
+    @value.class == 'Paper'
   end
 
   def lizard?
-    @value == 'lizard'
+    @value.class == 'Lizard'
   end
 
   def spock?
-    @value == 'spock'
-  end
-
-  def >(other_move)
-    if rock?
-      other_move.lizard? || other_move.scissors?
-    elsif paper?
-      other_move.spock? || other_move.rock?
-    elsif scissors?
-      other_move.lizard? || other_move.paper?
-    elsif lizard?
-      other_move.spock? || other_move.paper?
-    elsif spock?
-      other_move.rock? || other_move.scissors?
-    end
-  end
-
-  def <(other_move)
-    if rock?
-      other_move.spock? || other_move.paper?
-    elsif paper?
-      other_move.lizard? || other_move.scissors?
-    elsif scissors?
-      other_move.spock? || other_move.rock?
-    elsif lizard?
-      other_move.rock? || other_move.scissors?
-    elsif spock?
-      other_move.lizard? || other_move.paper?
-    end
+    @value.class == 'Spock'
   end
 
   def to_s
-    @value
+    @value.class
+  end
+end
+
+class Rock < Move
+  def initialize;end
+
+  def >(other_move)
+    other_move.lizard? || other_move.scissors?
+  end
+
+  def <(other_move)
+    other_move.spock? || other_move.paper?
+  end
+end
+
+class Paper < Move
+  def initialize;end
+
+  def >(other_move)
+    other_move.spock? || other_move.rock?
+  end
+
+  def <(other_move)
+    other_move.lizard? || other_move.scissors?
+  end
+end
+
+class Scissors < Move
+  def initialize;end
+
+  def >(other_move)
+    other_move.lizard? || other_move.paper?
+  end
+
+  def <(other_move)
+    other_move.spock? || other_move.rock?
+  end
+end
+
+class Lizard < Move
+  def initialize;end
+
+  def >(other_move)
+    other_move.spock? || other_move.paper?
+  end
+
+  def <(other_move)
+    other_move.rock? || other_move.scissors?
+  end
+end
+
+class Spock < Move
+  def initialize;end
+
+  def >(other_move)
+    other_move.rock? || other_move.scissors?
+  end
+
+  def <(other_move)
+    other_move.lizard? || other_move.paper?
   end
 end
 
@@ -104,6 +155,10 @@ class Player
   def initialize
     set_name
     @score = Score.new
+  end
+
+  def move
+    @move.value.class
   end
 end
 
@@ -161,10 +216,11 @@ class RPSGame
   end
 
   def display_goodbye_message
-    sleep 0.5
     if computer.score == 10
+      sleep 0.5
       puts "=== #{computer.name} is the ultimate winner!! ===".center(80)
     elsif human.score == 10
+      sleep 0.5
       puts "=== #{human.name} is the ultimate winner!! ===".center(80)
     end
     sleep 0.5
@@ -215,9 +271,17 @@ class RPSGame
 
   def display_scores
     sleep 0.5
-    puts "=== #{human.name} has #{human.score} points. ===".center(80)
+    if human.score == 1
+      puts "=== #{human.name} has 1 point. ===".center(80)
+    else
+      puts "=== #{human.name} has #{human.score} points. ===".center(80)
+    end
     sleep 0.5
-    puts "=== #{computer.name} has #{computer.score} points. ===".center(80)
+    if computer.score == 1
+      puts "=== #{computer.name} has 1 point. ===".center(80)
+    else
+      puts "=== #{computer.name} has #{computer.score} points. ===".center(80)
+    end
   end
 
   def ten_points?
