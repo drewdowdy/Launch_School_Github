@@ -183,11 +183,19 @@ end
 
 class Computer < Player
   def set_name
-    self.name = ['Computer', 'Bot', 'Wall-E', 'C3P0', 'T-800', 'Ava'].sample
+    self.name = ['Computer', 'Wall-E', 'T-800'].sample
   end
 
   def choose
-    self.move = Move.new(Move::VALUES.sample)
+    case @name
+    when 'Computer'
+      self.move = Move.new(Move::VALUES.sample)
+    when 'Wall-E'
+      chance = rand(10)
+      self.move = chance < 3 ? Move.new('paper') : Move.new('scissors')
+    when 'T-800'
+      self.move = Move.new('rock')
+    end
   end
 end
 
