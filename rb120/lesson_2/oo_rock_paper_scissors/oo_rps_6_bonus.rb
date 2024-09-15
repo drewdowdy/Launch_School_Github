@@ -34,6 +34,13 @@ The first player to 10 points is the ultimate winner.
 - the RPSGame class can display the move history at the end for each player
 - Maybe a history object can include the move history as well as the round numbers
 
+=== IMPLEMENT COMPUTER PERSONALITIES ===
+
+- change the way the computer chooses
+  - 'Computer' chooses randomly
+  - 'Wall-E' usually chooses scissors, sometimes chooses paper, but never rock
+  - 'T-800' always chooses rock
+
 =end
 
 def message(text)
