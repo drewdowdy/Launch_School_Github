@@ -225,17 +225,17 @@ class History
 
   def display
     title = 'Move History'
-    lable = " Round | #{@player1.name} | #{@player2.name}"
+    lables = " Round | #{@player1.name} | #{@player2.name}"
     lines = []
     
     @round_num.times do |i|
       lines << "#{i + 1}  #{@p1_moves[i]}  #{@p2_moves[i]}"
     end
 
-    width = lines.max_by(&:size).size > lable.size ? lines.max_by(&:size).size : lable.size
+    width = lines.max_by(&:size).size > lables.size ? lines.max_by(&:size).size : lables.size
 
     puts title.center(width)
-    puts lable.center(width)
+    puts lables.center(width)
     puts "#{'-' * width}"
     lines.each { |line| puts line }
   end
