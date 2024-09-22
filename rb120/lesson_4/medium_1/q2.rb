@@ -1,5 +1,6 @@
 class InvoiceEntry
   attr_reader :quantity, :product_name
+  attr_writer :quantity # add `attr_writer` for `:quantity`
 
   def initialize(product_name, number_purchased)
     @quantity = number_purchased
