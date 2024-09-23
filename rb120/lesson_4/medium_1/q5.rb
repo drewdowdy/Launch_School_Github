@@ -17,11 +17,11 @@ class KrispyKreme
     end
   end
 
-  def to_s
-    filling_string = @filling_type ? @filling_type : "Plain"
-    glazing_string = @glazing ? " with #{@glazing}" : ''
-    filling_string + glazing_string
-  end
+  # def to_s
+  #   filling_string = @filling_type ? @filling_type : "Plain"
+  #   glazing_string = @glazing ? " with #{@glazing}" : ''
+  #   filling_string + glazing_string
+  # end
 end
 
 donut1 = KrispyKreme.new(nil, nil)
