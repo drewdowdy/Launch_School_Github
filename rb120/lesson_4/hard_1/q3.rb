@@ -66,4 +66,4 @@ class Motorboat < SeaVehicle
 end
 
 my_boat = Motorboat.new(10, 30)
-p my_boat
+p my_boat.range
