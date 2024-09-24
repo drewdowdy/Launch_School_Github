@@ -1,0 +1,264 @@
+class Player
+  attr_reader :marker
+
+  def initialize(marker)
+    @marker = marker
+  end
+end
+
+class Board
+  attr_accessor :squares
+
+  WINNING_LINES =
+  [1, 2, 3], [4, 5, 6], [7, 8, 9], # rows
+  [1, 4, 7], [2, 5, 8], [3, 6, 9], #columns
+  [1, 5, 9], [3, 5, 7]             #diagonals
+
+  def initialize
+    @squares = {}
+    reset
+  end
+
+  def []=(key, marker)
+    @squares[key].marker = marker
+  end
+
+  def unmarked_keys
+    @squares.keys.select { |key| !@squares[key].marked? }
+  end
+
+  def full?
+    unmarked_keys.empty?
+  end
+
+  def someone_won?
+    !!winning_marker
+  end
+
+  def three_identical_markers?(squares)
+    marks = squares.select(&:marked?).map(&:marker)
+    return false if marks.size != 3
+    marks.all? { |current_sqr| marks.first == current_sqr }
+  end
+
+  def winning_marker
+    WINNING_LINES.each do |line|
+      squares = @squares.values_at(*line)
+      return squares.first.marker if three_identical_markers?(squares)
+    end
+    nil
+  end
+
+  def display
+    puts [
+      '',
+      "   |   |   ",
+      " #{@squares[1]} | #{@squares[2]} | #{@squares[3]} ",
+      "___|___|___",
+      "   |   |   ",
+      " #{@squares[4]} | #{@squares[5]} | #{@squares[6]} ",
+      "___|___|___",
+      "   |   |   ",
+      " #{@squares[7]} | #{@squares[8]} | #{@squares[9]} ",
+      "   |   |   ",
+      ''
+    ]
+  end
+
+  def reset
+    (1..9).each { |key| @squares[key] = Square.new }
+  end
+end
+
+class Square
+  attr_accessor :marker
+  
+  INITIAL_MARKER = ' '
+
+  def initialize(marker=INITIAL_MARKER)
+    @marker = marker
+  end
+
+  def marked?
+    marker != INITIAL_MARKER
+  end
+
+  def to_s
+    @marker
+  end
+end
+
+module Displayable
+  def message(*text)
+    text.each { |line| puts ">> #{line}" }
+  end
+
+  def banner(text)
+    width = text.size + 4
+    edge = '+' + '-' * width + '+'
+    blank = '|' + ' ' * width + '|'
+
+    puts edge, blank
+    puts '|' + text.center(width) + '|'
+    puts blank, edge
+  end
+
+  def welcome_message
+    banner('Welcome to TicTacToe!')
+  end
+
+  def goodbye_message
+    banner('Thanks for playing. Goodbye!')
+  end
+
+  def display_board
+    message ("You are #{human.marker}. Computer is #{computer.marker}.")
+    board.display
+  end
+
+  def clear_screen_and_display_board
+    clear_screen
+    display_board
+  end
+
+  def display_result
+    clear_screen
+    puts ''
+    board.display
+    case board.winning_marker
+    when human.marker
+      banner('You won!!')
+    when computer.marker
+      banner('Computer won!!')
+    else
+      banner("It's a tie!!")
+    end
+  end
+
+  def display_rules
+    clear_screen
+    banner('Rules')
+    message(
+      'Board:     The game is played on a 3x3 board of spaces.',
+      'Gameplay:  Players take turns marking empty spaces on the board.',
+      'Human:     Marks the board with \'X\'.',
+      'Computer:  Marks the board with \'O\'.',
+      'Winner:    The player has 3 marks in a row horizontally, vertically, or diagonally.',
+      'Tie:       The board is full and no player has 3 marks in a row.'
+    )
+    puts ''
+  end
+
+  def clear_screen
+    system 'clear'
+  end
+end
+
+class TTTGame
+  HUMAN_MARKER = 'X'
+  COMPUTER_MARKER = 'O'
+  INVALID_INPUT = 'Invalid input.'
+  FIRST_TO_MOVE = HUMAN_MARKER
+
+  include Displayable
+
+  attr_accessor :board, :human, :computer, :current_marker
+
+  def initialize
+    @human = Player.new(HUMAN_MARKER)
+    @computer = Player.new(COMPUTER_MARKER)
+    @board = Board.new
+    @current_marker = FIRST_TO_MOVE
+  end
+
+  def human_moves
+    square_num = nil
+    loop do 
+      message("Choose a square: (#{board.unmarked_keys.join(', ')})")
+      square_num = gets.chomp.to_i
+      break if board.unmarked_keys.include?(square_num)
+      message(INVALID_INPUT)
+    end
+    board[square_num] = human.marker
+  end
+
+  def computer_moves
+    loading("The computer is thinking")
+    num = board.unmarked_keys.sample
+    board[num] = computer.marker
+  end
+
+  def human_turn?
+    current_marker == HUMAN_MARKER
+  end
+
+  def current_player_moves
+    if human_turn?
+      human_moves
+      self.current_marker = COMPUTER_MARKER
+    else 
+      computer_moves
+      self.current_marker = HUMAN_MARKER
+    end
+  end
+
+  def confirm?(question)
+    answer = nil
+    loop do
+      message(question)
+      answer = gets.chomp.downcase
+      break if %w(y n).include?(answer)
+      message(INVALID_INPUT)
+    end
+    answer == 'y'
+  end
+
+  def loading(text='')
+    print '>> ' + text
+    3.times do 
+      sleep 0.5
+      print '.'
+    end
+    sleep 0.5
+  end
+
+  def reset_game
+    board.reset
+    self.current_marker = FIRST_TO_MOVE
+  end
+  
+  def play
+    clear_screen
+    welcome_message
+    display_rules if confirm?('Do you want to check the rules? (y/n)')
+
+    first_game = true
+
+    loop do
+      if first_game
+        break unless confirm?('Are you ready to play? (y/n)')
+        first_game = false
+      else
+        break unless confirm?('Play again? (y/n)')
+
+      end
+      loading('Setting up game')
+      clear_screen_and_display_board
+
+      loop do
+        current_player_moves
+        clear_screen_and_display_board
+        break if board.full? || board.someone_won?
+      end
+
+      loading('Processing results')
+      display_result
+      reset_game
+    end
+
+    clear_screen
+    goodbye_message
+  end
+end
+
+TTTGame.new.play
