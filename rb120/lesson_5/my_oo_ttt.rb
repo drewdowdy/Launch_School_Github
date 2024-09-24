@@ -124,7 +124,7 @@ class TTTGame
       (1..9).include?(square_num) && @board.squares[square_num] == ' '
       message 'Invalid input.'
     end
-    update_square_at(square_num, human.move)
+    update_square_at(square_num, human.mark)
   end
   
   def someone_won?

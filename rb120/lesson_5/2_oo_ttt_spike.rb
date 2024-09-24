@@ -1,24 +1,68 @@
 class Player
-  def choose
-    # choose a spot on the board
-    # number the spots 1-9
+  attr_reader :marker
+
+  def initialize(marker)
+    @marker = marker
   end
 end
 
 class Board
   attr_accessor :squares
 
+  WINNING_LINES =
+  [1, 2, 3], [4, 5, 6], [7, 8, 9], # rows
+  [1, 4, 7], [2, 5, 8], [3, 6, 9], #columns
+  [1, 5, 9], [3, 5, 7]             #diagonals
+
   def initialize
     @squares = {}
-    (1..9).each { |key| @squares[key] = Square.new(' ') }
+    reset
   end
 
   def get_square_at(key)
     @squares[key]
   end
 
+  def set_square_at(key, marker)
+    @squares[key].marker = marker
+  end
+
+  def unmarked_keys
+    @squares.keys.select { |key| @squares[key].unmarked? }
+  end
+
+  def full?
+    unmarked_keys.empty?
+  end
+
+  #returns boolean 
+  def someone_won?
+    !!detect_winner
+  end
+
+  def count_human_marker(squares)
+    squares.map(&:marker).count(TTTGame::HUMAN_MARKER)
+  end
+
+  def count_computer_marker(squares)
+    squares.map(&:marker).count(TTTGame::COMPUTER_MARKER)
+  end
+
+  # returns nil or winner's marker
+  def detect_winner
+    WINNING_LINES.each do |line|
+      if count_human_marker(@squares.values_at(*line)) == 3
+        return TTTGame::HUMAN_MARKER
+      elsif count_computer_marker(@squares.values_at(*line)) == 3
+        return TTTGame::COMPUTER_MARKER
+      end
+    end
+    nil
+  end
+
   def state
     [
+      '',
       "   |   |   ",
       " #{get_square_at(1)} | #{get_square_at(2)} | #{get_square_at(3)} ",
       "___|___|___",
@@ -27,22 +71,35 @@ class Board
       "___|___|___",
       "   |   |   ",
       " #{get_square_at(7)} | #{get_square_at(8)} | #{get_square_at(9)} ",
-      "   |   |   "
+      "   |   |   ",
+      ''
     ]
   end
 
   def display
     puts state
   end
+
+  def reset
+    (1..9).each { |key| @squares[key] = Square.new }
+  end
 end
 
 class Square
-  def initialize(mark)
-    @mark = mark
+  attr_accessor :marker
+  
+  INITIAL_MARKER = ' '
+
+  def initialize(marker=INITIAL_MARKER)
+    @marker = marker
+  end
+
+  def unmarked?
+    @marker == INITIAL_MARKER
   end
 
   def to_s
-    @mark
+    @marker
   end
 end
 
@@ -70,55 +127,89 @@ module Displayable
     message('Thanks for playing. Goodbye!')
   end
 
-  def results
-    # can show the results or the winner
+  def display_board(clear=true)
+    system 'clear' if clear
+    message ("You are #{human.marker}. Computer is #{computer.marker}.")
+    board.display
+  end
+
+  def display_result
+    board.display
+    case board.detect_winner
+    when human.marker
+      banner('You won!!')
+    when computer.marker
+      banner('Computer won!!')
+    else
+      message("It's a tie!!")
+    end
   end
 end
 
 class TTTGame
+  HUMAN_MARKER = 'X'
+  COMPUTER_MARKER = 'O'
+
   include Displayable
 
-  attr_accessor :board 
+  attr_accessor :board, :human, :computer
 
   def initialize
-    @human = Player.new
-    @computer = Player.new
+    @human = Player.new(HUMAN_MARKER)
+    @computer = Player.new(COMPUTER_MARKER)
     @board = Board.new
   end
 
   def human_moves
-    square = nil
+    square_num = nil
     loop do 
-      message("Choose a square 1-9:")
-      square_num = gets.chomp
-      (1..9).include?(square_num) && @board.squares[square_num] == ' '
+      message("Choose a square: (#{board.unmarked_keys.join(', ')})")
+      square_num = gets.chomp.to_i
+      break if board.unmarked_keys.include?(square_num)
       message 'Invalid input.'
     end
-    update_square_at(square_num, human.move)
-  end
-  
-  def someone_won?
-    # determine who has 3 in a row
+    board.set_square_at(square_num, human.marker)
+    system 'clear'
   end
 
-  def board_full
-    # check if all the spots on the board are full
+  def computer_moves
+    num = board.unmarked_keys.sample
+    board.set_square_at(num, computer.marker)
+    system 'clear'
+  end
+
+  def play_again?
+    answer = nil
+    loop do 
+      message('Play again? (y/n)')
+      answer = gets.chomp.downcase
+      break if %w(y n).include?(answer)
+      message("Invalid input. Type 'y' or 'n'.")
+    end
+    answer == 'y'
   end
   
   def play
+    system 'clear'
     welcome_message
+
     loop do
       display_board
-      human_moves
-      break if someone_won? || board_full?
-
-      computer_moves
-      break if someone_won? || board_full?
+      loop do
+        human_moves
+        break if board.full? || board.someone_won?
+        
+        computer_moves
+        display_board
+        break if board.full? || board.someone_won?
+      end
+      display_result
+      break unless play_again?
+      board.reset
     end
-    display_result
+
     goodbye_message
   end
 end
 
-# TTTGame.new.welcome_message
-Board.new.display
+TTTGame.new.play
