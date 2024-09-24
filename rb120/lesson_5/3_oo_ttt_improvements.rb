@@ -10,9 +10,9 @@ class Board
   attr_accessor :squares
 
   WINNING_LINES =
-  [1, 2, 3], [4, 5, 6], [7, 8, 9], # rows
-  [1, 4, 7], [2, 5, 8], [3, 6, 9], #columns
-  [1, 5, 9], [3, 5, 7]             #diagonals
+    [1, 2, 3], [4, 5, 6], [7, 8, 9], # rows
+    [1, 4, 7], [2, 5, 8], [3, 6, 9], # columns
+    [1, 5, 9], [3, 5, 7]             # diagonals
 
   def initialize
     @squares = {}
@@ -49,6 +49,7 @@ class Board
     nil
   end
 
+  # rubocop:disable Metrics/MethodLength
   def display
     puts [
       '',
@@ -64,6 +65,7 @@ class Board
       ''
     ]
   end
+  # rubocop:enable Metrics/MethodLength
 
   def reset
     (1..9).each { |key| @squares[key] = Square.new }
@@ -72,7 +74,7 @@ end
 
 class Square
   attr_accessor :marker
-  
+
   INITIAL_MARKER = ' '
 
   def initialize(marker=INITIAL_MARKER)
@@ -95,11 +97,11 @@ module Displayable
 
   def banner(text)
     width = text.size + 4
-    edge = '+' + '-' * width + '+'
-    blank = '|' + ' ' * width + '|'
+    edge = "+#{'-' * width}+"
+    blank = "|#{' ' * width}|"
 
     puts edge, blank
-    puts '|' + text.center(width) + '|'
+    puts "|#{text.center(width)}|"
     puts blank, edge
   end
 
@@ -112,7 +114,7 @@ module Displayable
   end
 
   def display_board
-    message ("You are #{human.marker}. Computer is #{computer.marker}.")
+    message("You are #{human.marker}. Computer is #{computer.marker}.")
     board.display
   end
 
@@ -121,10 +123,7 @@ module Displayable
     display_board
   end
 
-  def display_result
-    clear_screen
-    puts ''
-    board.display
+  def winning_message
     case board.winning_marker
     when human.marker
       banner('You won!!')
@@ -135,17 +134,31 @@ module Displayable
     end
   end
 
-  def display_rules
+  def display_result
+    loading('Processing results')
     clear_screen
-    banner('Rules')
-    message(
+    puts ''
+    board.display
+    winning_message
+  end
+
+  def rules_array
+    [
       'Board:     The game is played on a 3x3 board of spaces.',
       'Gameplay:  Players take turns marking empty spaces on the board.',
       'Human:     Marks the board with \'X\'.',
       'Computer:  Marks the board with \'O\'.',
-      'Winner:    The player has 3 marks in a row horizontally, vertically, or diagonally.',
+      'Winner:    The player has 3 marks in a row',
+      '           horizontally, vertically, or diagonally.',
       'Tie:       The board is full and no player has 3 marks in a row.'
-    )
+    ]
+  end
+
+  def display_rules
+    return unless confirm?('Do you want to check the rules? (y/n)')
+    clear_screen
+    banner('Rules')
+    rules_array.each { |line| message(line) }
     puts ''
   end
 
@@ -173,7 +186,7 @@ class TTTGame
 
   def human_moves
     square_num = nil
-    loop do 
+    loop do
       message("Choose a square: (#{board.unmarked_keys.join(', ')})")
       square_num = gets.chomp.to_i
       break if board.unmarked_keys.include?(square_num)
@@ -196,7 +209,7 @@ class TTTGame
     if human_turn?
       human_moves
       self.current_marker = COMPUTER_MARKER
-    else 
+    else
       computer_moves
       self.current_marker = HUMAN_MARKER
     end
@@ -214,8 +227,9 @@ class TTTGame
   end
 
   def loading(text='')
-    print '>> ' + text
-    3.times do 
+    print ">> #{text}"
+
+    3.times do
       sleep 0.5
       print '.'
     end
@@ -226,36 +240,44 @@ class TTTGame
     board.reset
     self.current_marker = FIRST_TO_MOVE
   end
-  
+
+  def player_move
+    loop do
+      current_player_moves
+      clear_screen_and_display_board
+      break if board.full? || board.someone_won?
+    end
+  end
+
+  def set_up_game
+    loading('Setting up game')
+    clear_screen_and_display_board
+  end
+
+  def play_again?
+    confirm?('Play again? (y/n)')
+  end
+
+  def ready?
+    confirm?('Are you ready to play?(y/n)')
+  end
+
+  def main_game
+    loop do
+      break unless ready?
+      set_up_game
+      player_move
+      display_result
+      reset_game
+      break unless play_again?
+    end
+  end
+
   def play
     clear_screen
     welcome_message
-    display_rules if confirm?('Do you want to check the rules? (y/n)')
-
-    first_game = true
-
-    loop do
-      if first_game
-        break unless confirm?('Are you ready to play? (y/n)')
-        first_game = false
-      else
-        break unless confirm?('Play again? (y/n)')
-
-      end
-      loading('Setting up game')
-      clear_screen_and_display_board
-
-      loop do
-        current_player_moves
-        clear_screen_and_display_board
-        break if board.full? || board.someone_won?
-      end
-
-      loading('Processing results')
-      display_result
-      reset_game
-    end
-
+    display_rules
+    main_game
     clear_screen
     goodbye_message
   end
