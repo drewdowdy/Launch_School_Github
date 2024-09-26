@@ -120,13 +120,13 @@ class Board
   def display
     puts [
       '',
-      "   |   |   ",
+      " 1 | 2 | 3 ",
       " #{@squares[1]} | #{@squares[2]} | #{@squares[3]} ",
       "___|___|___",
-      "   |   |   ",
+      " 4 | 5 | 6 ",
       " #{@squares[4]} | #{@squares[5]} | #{@squares[6]} ",
       "___|___|___",
-      "   |   |   ",
+      " 7 | 8 | 9 ",
       " #{@squares[7]} | #{@squares[8]} | #{@squares[9]} ",
       "   |   |   ",
       ''
@@ -165,6 +165,8 @@ module Displayable
   end
 
   def goodbye_message
+    loading
+    clear_screen
     banner('Thanks for playing. Goodbye!')
   end
 
@@ -199,22 +201,33 @@ module Displayable
 
   def rules_array
     [
-      'Board:     The game is played on a 3x3 board of spaces.',
-      'Gameplay:  Players take turns marking empty spaces on the board.',
-      'Human:     Marks the board with \'X\'.',
-      'Computer:  Marks the board with \'O\'.',
-      'Winner:    The player has 3 marks in a row',
-      '           horizontally, vertically, or diagonally.',
-      'Tie:       The board is full and no player has 3 marks in a row.'
+      'Board:       The game is played on a 3x3 board of spaces.',
+      'Gameplay:    Players take turns marking empty spaces on the board.',
+      'Human:       Marks the board first.',
+      'Computer:    Marks the board after the human.',
+      'Winner:      Whoever has 3 marks in a row',
+      'Conditions:  Horizontally, vertically, or diagonally.',
+      'Tie:         The board is full and no player has 3 marks in a row.'
     ]
   end
 
   def display_rules
     return unless confirm?('Do you want to check the rules? (y/n)')
-    clear_screen
-    banner('Rules')
-    rules_array.each { |line| message(line) }
-    puts ''
+    loop do 
+      clear_screen
+      banner('Rules')
+      rules_array.each { |line| message(line) }
+      puts ''
+      if ready?
+        break
+      else
+        loading('Take your time')
+      end
+    end
+  end
+
+  def ready?
+    confirm?('Are you ready to play?(y/n)')
   end
 
   def clear_screen
@@ -311,13 +324,8 @@ class TTTGame
     confirm?('Play again? (y/n)')
   end
 
-  def ready?
-    confirm?('Are you ready to play?(y/n)')
-  end
-
   def main_game
     loop do
-      break unless ready?
       set_up_game
       player_move
       display_result
@@ -331,7 +339,6 @@ class TTTGame
     welcome_message
     display_rules
     main_game
-    clear_screen
     goodbye_message
   end
 end
