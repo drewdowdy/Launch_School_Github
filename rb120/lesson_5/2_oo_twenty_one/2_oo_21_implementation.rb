@@ -45,8 +45,9 @@ module Messageable
 
   def confirm?(question, pos_choice, neg_choice)
     answer = nil
+    formatted_question = "#{question}(#{pos_choice}/#{neg_choice})"
     loop do
-      message(question)
+      message(formatted_question)
       answer = gets.chomp.downcase
       break if [pos_choice, neg_choice].include?(answer)
       message(Game::INVALID_INPUT)
@@ -75,12 +76,18 @@ module Displayable
     banner('Welcome to Twenty-One!')
   end
 
+  def goodbye_message
+    loading
+    clear_screen
+    banner('Thanks for playing Twenty-One. Goodbye!')
+  end
+
   def rules_array
     [
       'Objective: The total of your hand should be as close to 21 as possible.',
-      'Points: The number of each card adds to your total.',
-      '        Jack, Queen, and King are 10 points.',
-      '        Ace is 1 or 11 points.',
+      'Points:    The number of each card adds to your total.',
+      '           Jack, Queen, and King are 10 points.',
+      '           Ace is 1 or 11 points.',
       '',
       'Your turn: Can \'hit\' or \'stay\'.',
       'AI\'s Turn: Also can \'hit\' or \'stay\'.',
@@ -94,11 +101,11 @@ module Displayable
   end
 
   def ready?
-    confirm?('Are you ready to play?(y/n)', 'y', 'n')
+    confirm?('Are you ready to play?', 'y', 'n')
   end
 
   def display_rules
-    return unless confirm?('Do you want to check the rules? (y/n)', 'y', 'n')
+    return unless confirm?('Do you want to check the rules?', 'y', 'n')
     loop do 
       clear_screen
       banner('Rules of Twenty-One')
@@ -145,7 +152,7 @@ class Player
   def rows(card)
     top_corner = card.face == '10' ? card.face : "#{card.face} "
     bottom_corner = card.face == '10' ? card.face : "_#{card.face}"
-    suit = Card::SUITS[card.suit][0]
+    suit = Card::SUIT_SYMBOLS[card.suit]
     [
       " _______ ",
       "|#{top_corner}     |",
@@ -176,18 +183,27 @@ class Player
     hand.map(&:face).each do |face|
       total += Game::SCORES[face]
     end
-    # minus 10 for every ace IF total is over 21
+    if total > 21
+      hand.map(&:face).count('A').times do
+        total -= 10
+      end
+    end
     total
   end
 end
 
 class Dealer < Player
-  def show_hand(reveal_dealer: false)
+  def show_hand(reveal_dealer=false)
+    if reveal_dealer
+      super() 
+      return
+    end
+
     rows = []
     6.times { rows << '' }
     
     hand.each_with_index do |card, i|
-      card_rows = if i == 0 && !reveal_dealer
+      card_rows = if i == 0
         [
           " _______ ",
           "|??     |",
@@ -215,8 +231,8 @@ class Deck
   def initialize
     @cards = []
 
-    Card::FACES.keys.each do |face|
-      Card::SUITS.keys.each do |suit|
+    Card::FACES.each do |face|
+      Card::SUITS.each do |suit|
         @cards << Card.new(face, suit)
       end
     end
@@ -228,53 +244,37 @@ end
 class Card
   attr_reader :face, :suit
 
-  FACES = {
-    '2'=>'two',
-    '3'=>'three',
-    '4'=>'four',
-    '5'=>'five',
-    '6'=>'six',
-    '7'=>'seven',
-    '8'=>'eight',
-    '9'=>'nine',
-    '10'=>'ten',
-    'A'=>'ace',
-    'J'=>'jack',
-    'Q'=>'queen',
-    'K'=>'king'
-  }
+  FACES = %w(2 3 4 5 6 7 8 9 10 A J Q K)
+  SUITS = %w(D C H S)
 
-  %w(2 3 4 5 6 7 8 9 10 A J Q K)
-  %w(D C H S)
-
-  SUITS = {
-    'D'=>['♦', 'diamonds'],
-    'C'=>['♣', 'clubs'],
-    'H'=>['♥', 'hearts'],
-    'S'=>['♠', 'spades']
+  SUIT_SYMBOLS = {
+    'D'=>'♦',
+    'C'=>'♣',
+    'H'=>'♥',
+    'S'=>'♠'
   }
 
   def initialize(face, suit)
     @face = face
     @suit = suit
   end
-
-  def to_s
-    "#{FACES[face]} of #{SUITS[suit][1]}"
-  end
 end
 
 module Moveable
-  def hit(player)
-    deal_cards(1, player)
+  def hit(participant)
+    deal_cards(1, participant)
     show_cards
-    if player.class == Player
-      confirm?('Hit or stay?(h/s)', 'h', 's') ? hit(player) : stay(player)
+    if busted?(participant)
+      loading("#{participant.name} busted")
+      return
+    end
+    if participant.class == Player
+      confirm?('Hit or stay?', 'h', 's') ? hit(participant) : stay(participant)
     end
   end
 
-  def stay(player)
-    loading("#{player.name} chose to stay")
+  def stay(participant)
+    loading("#{participant.name} chose to stay")
   end
 
   def busted?(participant)
@@ -287,20 +287,13 @@ class Game
 
   INVALID_INPUT = "Invalid input."
   SCORES = {
-    '2'=>2,
-    '3'=>3,
-    '4'=>4,
-    '5'=>5,
-    '6'=>6,
-    '7'=>7,
-    '8'=>8,
-    '9'=>9,
-    '10'=>10,
-    'A'=>11,
-    'J'=>10,
-    'Q'=>10,
-    'K'=>10
+    '2'=>2, '3'=>3, '4'=>4, '5'=>5, 
+    '6'=>6, '7'=>7, '8'=>8, '9'=>9,'10'=>10,
+    'J'=>10, 'Q'=>10, 'K'=>10, 'A'=>11
   }
+  WINNING_TOTAL = 21
+
+  @@reveal_dealer = false
 
   include Messageable, Displayable, Moveable
 
@@ -323,7 +316,11 @@ class Game
     message("#{player.name}'s Hand")
     player.show_hand
     message("#{dealer.name}'s Hand")
-    dealer.show_hand
+    if !@@reveal_dealer
+      dealer.show_hand
+    else
+      dealer.show_hand(@@reveal_dealer)
+    end
     puts ''
   end
 
@@ -350,20 +347,83 @@ class Game
     stay(dealer)
   end
 
+  def determine_winner
+    dealer_diff = (WINNING_TOTAL - dealer.total).abs
+    player_diff = (WINNING_TOTAL - player.total).abs
+    differences = [dealer_diff, player_diff]
+    case differences.min
+    when player_diff
+      [player, dealer]
+    when dealer_diff
+      [dealer, player]
+    end
+  end
+
+  def winner_and_loser
+    if busted?(player) && !busted?(dealer)
+      [dealer, player]
+    elsif busted?(dealer) && !busted?(player)
+      [player, dealer]
+    elsif busted?(player) && busted?(dealer)
+      []
+    else
+      determine_winner
+    end
+  end
+
+  def tie?
+    if !busted?(player) && !busted?(dealer)
+      player.total == dealer.total
+    else
+      false
+    end
+  end
+
   def show_result
-    show_cards(reveal_dealer: true)
+    @@reveal_dealer = true
+    loading('Processing results')
+    show_cards
+    if tie?
+      message("It's a tie!! Everyone has the same total.")
+    elsif winner_and_loser.empty?
+      message('Everyone busted. No one won..')
+    else
+      winner = winner_and_loser.first
+      loser = winner_and_loser.last
+      message("#{winner.name} is the winner with #{winner.total}.")
+      message("#{loser.name} is the loser with #{loser.total}.")
+    end
+  end
+
+  def reset_game
+    loading('Shuffling deck')
+    deck = Deck.new
+    player.hand = []
+    dealer.hand = []
+    @@reveal_dealer = false
+  end
+
+  def main_game
+    loop do
+      deal_cards(2, player, dealer)
+      show_cards
+      player_turn
+      dealer_turn
+      show_result
+      return unless play_again?
+      reset_game
+    end
+  end
+
+  def play_again?
+    confirm?('Play again?', 'y', 'n')
   end
 
   def start
     welcome_message
     display_rules
-    deal_cards(2, player, dealer)
-    show_cards
-    player_turn
-    dealer_turn
-    # binding.pry
-    return
-    # show_result
+    main_game
+    goodbye_message
   end
 end
 
