@@ -4,7 +4,7 @@ Move
   - methods related to game
     - hit
     - stay
-  - mix in with Player? 
+  - mix in with Player?
 Player
   - has a hand
   - has a name?
@@ -106,16 +106,13 @@ module Displayable
 
   def display_rules
     return unless confirm?('Do you want to check the rules?', 'y', 'n')
-    loop do 
+    loop do
       clear_screen
       banner('Rules of Twenty-One')
       rules_array.each { |line| message(line) }
       puts ''
-      if ready?
-        break
-      else
-        loading('Take your time')
-      end
+      break if ready?
+      loading('Take your time')
     end
   end
 end
@@ -131,7 +128,7 @@ class Player
   end
 
   def human?
-    self.class == Player
+    self.instance_of?(Player)
   end
 
   def set_name
@@ -175,7 +172,6 @@ class Player
     end
 
     rows.each { |row| puts row }
-    puts ''
   end
 
   def total
@@ -268,7 +264,7 @@ module Moveable
       loading("#{participant.name} busted")
       return
     end
-    if participant.class == Player
+    if participant.instance_of?(Player)
       confirm?('Hit or stay?', 'h', 's') ? hit(participant) : stay(participant)
     end
   end
@@ -315,11 +311,12 @@ class Game
     clear_screen
     message("#{player.name}'s Hand")
     player.show_hand
+    puts ''
     message("#{dealer.name}'s Hand")
     if !@@reveal_dealer
       dealer.show_hand
     else
-      dealer.show_hand(@@reveal_dealer)
+      dealer.show_hand(reveal_dealer: true)
     end
     puts ''
   end
@@ -397,7 +394,7 @@ class Game
 
   def reset_game
     loading('Shuffling deck')
-    deck = Deck.new
+    self.deck = Deck.new
     player.hand = []
     dealer.hand = []
     @@reveal_dealer = false
