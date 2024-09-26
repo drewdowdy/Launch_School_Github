@@ -128,7 +128,7 @@ class Player
   end
 
   def human?
-    self.instance_of?(Player)
+    instance_of?(Player)
   end
 
   def set_name
@@ -164,7 +164,7 @@ class Player
   def show_hand
     rows = []
     6.times { rows << '' }
-    
+
     hand.each do |card|
       (0..5).each do |idx|
         rows[idx] += rows(card)[idx]
@@ -189,26 +189,27 @@ class Player
 end
 
 class Dealer < Player
-  def show_hand(reveal_dealer=false)
+  def show_hand(reveal_dealer: false)
     if reveal_dealer
-      super() 
+      super()
       return
     end
 
     rows = []
     6.times { rows << '' }
-    
-    hand.each_with_index do |card, i|
-      card_rows = if i == 0
-        [
-          " _______ ",
-          "|??     |",
-          "|       |",
-          "|   ??  |",
-          "|       |",
-          "|_____??|",
-          ''
-        ]
+
+    hand.each_with_index do |card, card_idx|
+      card_rows =
+        if card_idx == 0
+          [
+            " _______ ",
+            "|??     |",
+            "|       |",
+            "|   ??  |",
+            "|       |",
+            "|_____??|",
+            ''
+          ]
         else
           rows(card)
         end
@@ -244,10 +245,10 @@ class Card
   SUITS = %w(D C H S)
 
   SUIT_SYMBOLS = {
-    'D'=>'♦',
-    'C'=>'♣',
-    'H'=>'♥',
-    'S'=>'♠'
+    'D' => '♦',
+    'C' => '♣',
+    'H' => '♥',
+    'S' => '♠'
   }
 
   def initialize(face, suit)
@@ -264,9 +265,8 @@ module Moveable
       loading("#{participant.name} busted")
       return
     end
-    if participant.instance_of?(Player)
-      confirm?('Hit or stay?', 'h', 's') ? hit(participant) : stay(participant)
-    end
+    return unless participant.instance_of?(Player)
+    confirm?('Hit or stay?', 'h', 's') ? hit(participant) : stay(participant)
   end
 
   def stay(participant)
@@ -283,9 +283,9 @@ class Game
 
   INVALID_INPUT = "Invalid input."
   SCORES = {
-    '2'=>2, '3'=>3, '4'=>4, '5'=>5, 
-    '6'=>6, '7'=>7, '8'=>8, '9'=>9,'10'=>10,
-    'J'=>10, 'Q'=>10, 'K'=>10, 'A'=>11
+    '2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6,
+    '7' => 7, '8' => 8, '9' => 9, '10' => 10,
+    'J' => 10, 'Q' => 10, 'K' => 10, 'A' => 11
   }
   WINNING_TOTAL = 21
 
@@ -301,8 +301,10 @@ class Game
   end
 
   def deal_cards(num, *participants)
-    loading('Cards are being dealt')
-    num.times do 
+    card = num == 1 ? 'card' : 'cards'
+    people = participants.map(&:name)
+    loading("Dealing out #{num} #{card} to #{people.join(' and ')}")
+    num.times do
       participants.each { |participant| participant.hand << deck.cards.pop }
     end
   end
@@ -313,17 +315,18 @@ class Game
     player.show_hand
     puts ''
     message("#{dealer.name}'s Hand")
-    if !@@reveal_dealer
-      dealer.show_hand
-    else
+
+    if @@reveal_dealer
       dealer.show_hand(reveal_dealer: true)
+    else
+      dealer.show_hand
     end
     puts ''
   end
 
   def player_turn
     move = nil
-    loop do 
+    loop do
       message('Hit or stay?(h/s)')
       move = gets.chomp.downcase
       break if %w(h s).include?(move)
