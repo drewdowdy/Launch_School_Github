@@ -92,7 +92,7 @@ miller_contracting.display_all_employees
 
 =begin
 
-Error: `NoMethodError`, the `#==` method attempts to call `#serial_number` on the other `Employee` object, but since that method is private, the method has no access to it.
+Error: `NoMethodError`, the `#==` method attempts to call `#serial_number` on the other `Employee` object, but since that method is private, the other `Employee` object has no access to it.
 
 Fix: change `private` to `protected`. Then the class can use the method across objects but the user still won't have access
 
