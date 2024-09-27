@@ -108,4 +108,14 @@ Error: `ArgumentErorr`, we need to convert the units for every comparison method
 
 Fix: Since the `#sort` invocation uses the `#<=>` method to sort, we can define our own `#<=>` method
 
+Further Exploration:
+
+When using floating point numbers, there's always a bit of imprecision. 
+
+We can account for this by instead of comparing for equality with `==`, we can check the difference with a margin of error.
+
 =end
+
+Length.new(10, :km).as_nautical_miles.as_kilometers == Length.new(10, :km) # => false
+
+(Length.new(10, :km).as_nautical_miles.as_kilometers - Length.new(10, :km)).abs < 0.001 # => true
