@@ -84,19 +84,19 @@ module Displayable
 
   def rules_array
     [
-      'Objective: The total of your hand should be as close to 21 as possible.',
-      'Points:  The number of each card adds to your total.',
-      '   Jack, Queen, and King are 10 points.',
-      '   Ace is 1 or 11 points.',
+      'Objective: Get as close to 21 as possible with the total of your hand.',
+      'Points: Cards add to your total.',
+      '   Jack, Queen, and King are worth 10 points.',
+      '   Ace is worth 1 or 11 points.',
       '',
-      'Your turn: Can \'hit\' or \'stay\'.',
-      'Dealer\'s Turn: Also can \'hit\' or \'stay\'.',
+      'Your turn: You can "hit" or "stay".',
+      'Dealer\'s turn: The dealer can also "hit" or "stay".',
       '',
-      'Hit: Get 1 card from the dealer. Any player can hit as many times as they like.',
-      'Stay: Get zero cards. The current player\'s turn ends.',
+      'Hit: Take 1 card from the dealer. Can hit as many times as you want.',
+      'Stay: Take no more cards, and your turn ends.',
       '',
-      'Bust: When a player\'s total goes over 21. That player automatically loses.',
-      'Tie: If both players have the same total in their hands.'
+      'Bust: If your total goes over 21, you automatically lose.',
+      'Tie: If both players have the same total, it\'s a tie.'
     ]
   end
 
