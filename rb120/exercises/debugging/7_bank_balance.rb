@@ -17,7 +17,7 @@ class BankAccount
   end
 
   def withdraw(amount)
-    if amount > 0 && (balance - amount) >= 0
+    if amount > 0 && valid_transaction?(balance - amount)
       # success = (self.balance -= amount)
       self.balance -= amount
       "$#{amount} withdrawn. Total balance is $#{balance}."
@@ -63,6 +63,7 @@ p account.withdraw(80)    # => Invalid. Enter positive amount less than or equal
                           # Actual output: $80 withdrawn. Total balance is $50.
 p account.balance         # => 50
 p account.withdraw(40)
+p account.balance
 
 
 =begin
@@ -72,5 +73,8 @@ Error: on `line 21`, `success` references the difference assignment of the balan
 Fix: 
   - refactor #withdraw so it only has one `if` statement.
   - remove the #balance= method and created a protected attr_writer for :balance (so that the user can't change the balance directly)
+
+Note:
+  Any setter method will always return it's argument, regardless of any explicit `return` keywords
 
 =end
