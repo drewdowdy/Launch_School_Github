@@ -17,32 +17,38 @@ class BankAccount
   end
 
   def withdraw(amount)
-    if amount > 0
+    if amount > 0 && (balance - amount) >= 0
       # success = (self.balance -= amount)
-      success = (self.balance -= amount) >= 0
-    else
-      success = false
-    end
-
-    if success
+      self.balance -= amount
       "$#{amount} withdrawn. Total balance is $#{balance}."
     else
+      # success = false
       "Invalid. Enter positive amount less than or equal to current balance ($#{balance})."
     end
+
+    # if success
+    #   "$#{amount} withdrawn. Total balance is $#{balance}."
+    # else
+    #   "Invalid. Enter positive amount less than or equal to current balance ($#{balance})."
+    # end
   end
 
-  def balance=(new_balance)
-    if valid_transaction?(new_balance)
-      @balance = new_balance
-      true
-    else
-      false
-    end
-  end
+  # def balance=(new_balance)
+    # if valid_transaction?(new_balance)
+      # @balance = new_balance
+    #   true
+    # else
+    #   false
+    # end
+  # end
 
   def valid_transaction?(new_balance)
     new_balance >= 0
   end
+
+  protected
+
+  attr_writer :balance
 end
 
 # Example
@@ -61,8 +67,10 @@ p account.withdraw(40)
 
 =begin
 
-Error: on `line 21`, `success` references the difference assignment of the balance if the input number is greater than 0. Every positive integer will make 
+Error: on `line 21`, `success` references the difference assignment of the balance if the input number is greater than 0. Every positive integer will make this truthy.
 
 Fix: 
+  - refactor #withdraw so it only has one `if` statement.
+  - remove the #balance= method and created a protected attr_writer for :balance (so that the user can't change the balance directly)
 
 =end
