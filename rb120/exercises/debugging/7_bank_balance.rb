@@ -77,4 +77,35 @@ Fix:
 Note:
   Any setter method will always return it's argument, regardless of any explicit `return` keywords
 
+Further Exploration:
+  What will the return value of a setter method be if you mutate its argument in the method body?
+
+=end
+
+puts ''
+puts 'Further Exploration:'
+
+class Cat
+  attr_reader :name
+
+  def initialize(name)
+    @name = name
+  end
+
+  def name=(string)
+    string.upcase!
+    # return 'Bobby'
+  end
+end
+
+kitty = Cat.new('Mittens')
+p kitty.name = 'Billy'
+p kitty.name
+
+=begin
+
+If we mutate the argument passed into a setter method, then the return value is the now mutated argument. 
+
+Any explicit 'return' is also ignored in a setter method.
+
 =end
