@@ -183,9 +183,9 @@ module Displayable
   def winning_message
     case board.winning_marker
     when human.marker
-      banner('You won!!')
+      banner("#{human.name} won!!")
     when computer.marker
-      banner('Computer won!!')
+      banner("#{computer.name} won!!")
     else
       banner("It's a tie!!")
     end
@@ -215,7 +215,7 @@ module Displayable
     return unless confirm?('Do you want to check the rules? (y/n)')
     loop do 
       clear_screen
-      banner('Rules')
+      banner('Rules of TicTacToe')
       rules_array.each { |line| message(line) }
       puts ''
       if ready?
