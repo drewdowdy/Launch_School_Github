@@ -4,7 +4,7 @@ Move
   - methods related to game
     - hit
     - stay
-  - mix in with Player?
+  - mix in with Game
 Player
   - has a hand
   - has a name?
@@ -15,14 +15,13 @@ Dealer < Player
 Deck
   - has cards
   - cards can be removed
-  - deals cards
 Card
   - has a suit and a number
 Game
   - starts game
   - has a deck
   - has a player and a dealer
-  - deals cards to player and 'dealer'
+  - deals cards to player and dealer
 
 =end
 
