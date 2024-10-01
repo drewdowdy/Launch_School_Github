@@ -1,38 +1,41 @@
 =begin
 
-Move
-  - methods related to game
-    - hit
-    - stay
-  - mix in with Game
-Player
-  - has a hand
-  - has a name?
-  - state of busted or not
-  - both cards are visible
-Dealer < Player
-  - only 1 card is visible
-Deck
-  - has cards
-  - cards can be removed
-Card
-  - has a suit and a number
-Game
-  - starts game
-  - has a deck
-  - has a player and a dealer
-  - deals cards to player and dealer
+Feedback:
+
+1. Name shouldn't be a string of spaces
+2. Display the total of each hand (player/dealer)
+3. Dealer busted then 'chose to stay'
+4. Consider a `Player` superclass and `Human` and `Dealer` subclasses
+5. Round of games with scoreboard
+[done] 6. Place messages in a YML file
+7. `Game` class is too big
+  - one to orchestrate
+  - one for specific rounds
+8. Consider using `private` for method access control
 
 =end
 
 require 'pry'
+require 'yaml'
+
+MESSAGES = YAML.load_file('Launch_School_Github/rb120/lesson_5/2_oo_twenty_one/3_oo_21.yml')
 
 module Messageable
   def message(*text)
-    text.each { |line| puts ">> #{line}" }
+    text.each do |line| 
+      if is_yml?(line)
+        puts ">> #{MESSAGES[line]}"
+      else 
+        puts ">> #{line}"
+      end
+    end
   end
 
   def banner(text)
+    if is_yml?(text)
+      text = MESSAGES[text]
+    end
+
     width = text.size + 4
     edge = "+#{'-' * width}+"
     blank = "|#{' ' * width}|"
@@ -44,14 +47,19 @@ module Messageable
 
   def confirm?(question, pos_choice, neg_choice)
     answer = nil
-    formatted_question = "#{question}(#{pos_choice}/#{neg_choice})"
+    question = MESSAGES[question] if is_yml?(question)
+    formatted_question = "#{question} (#{pos_choice}/#{neg_choice})"
     loop do
       message(formatted_question)
       answer = gets.chomp.downcase
       break if [pos_choice, neg_choice].include?(answer)
-      message(Game::INVALID_INPUT)
+      message('invalid')
     end
     answer == pos_choice
+  end
+
+  def is_yml?(text)
+    MESSAGES.key?(text)
   end
 end
 
@@ -72,43 +80,25 @@ module Displayable
 
   def welcome_message
     clear_screen
-    banner('Welcome to Twenty-One!')
+    banner('welcome')
   end
 
   def goodbye_message
     loading
     clear_screen
-    banner('Thanks for playing Twenty-One. Goodbye!')
-  end
-
-  def rules_array
-    [
-      'Objective: Get as close to 21 as possible with the total of your hand.',
-      'Points: Cards add to your total.',
-      '   Jack, Queen, and King are worth 10 points.',
-      '   Ace is worth 1 or 11 points.',
-      '',
-      'Your turn: You can "hit" or "stay".',
-      'Dealer\'s turn: The dealer can also "hit" or "stay".',
-      '',
-      'Hit: Take 1 card from the dealer. Can hit as many times as you want.',
-      'Stay: Take no more cards, and your turn ends.',
-      '',
-      'Bust: If your total goes over 21, you automatically lose.',
-      'Tie: If both players have the same total, it\'s a tie.'
-    ]
+    banner('goodbye')
   end
 
   def ready?
-    confirm?('Are you ready to play?', 'y', 'n')
+    confirm?('ready', 'y', 'n')
   end
 
   def display_rules
-    return unless confirm?('Do you want to check the rules?', 'y', 'n')
+    return unless confirm?('check_rules', 'y', 'n')
     loop do
       clear_screen
       banner('Rules of Twenty-One')
-      rules_array.each { |line| message(line) }
+      MESSAGES['rules'].each { |line| message(line) }
       puts ''
       break if ready?
       loading('Take your time')
@@ -137,7 +127,7 @@ class Player
         message('Type your name:')
         answer = gets.chomp
         break unless answer.empty?
-        puts Game::INVALID_INPUT
+        message('invalid')
       end
       self.name = answer
     else
@@ -200,15 +190,7 @@ class Dealer < Player
     hand.each_with_index do |card, card_idx|
       card_rows =
         if card_idx == 0
-          [
-            " _______ ",
-            "|??     |",
-            "|       |",
-            "|   ??  |",
-            "|       |",
-            "|_____??|",
-            ''
-          ]
+          MESSAGES['mystery_card']
         else
           rows(card)
         end
@@ -265,7 +247,7 @@ module Moveable
       return
     end
     return unless participant.instance_of?(Player)
-    confirm?('Hit or stay?', 'h', 's') ? hit(participant) : stay(participant)
+    confirm?('hit_or_stay', 'h', 's') ? hit(participant) : stay(participant)
   end
 
   def stay(participant)
@@ -280,7 +262,6 @@ end
 class Game
   attr_accessor :player, :dealer, :deck
 
-  INVALID_INPUT = "Invalid input."
   SCORES = {
     '2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6,
     '7' => 7, '8' => 8, '9' => 9, '10' => 10,
@@ -326,10 +307,10 @@ class Game
   def player_turn
     move = nil
     loop do
-      message('Hit or stay? (h/s)')
+      message('Hit or stay?(h/s)')
       move = gets.chomp.downcase
       break if %w(h s).include?(move)
-      puts Game::INVALID_INPUT
+      message('invalid')
     end
 
     case move
@@ -380,12 +361,12 @@ class Game
 
   def show_result
     @@reveal_dealer = true
-    loading('Processing results')
+    loading('processing')
     show_cards
     if tie?
-      message("It's a tie!! Everyone has the same total.")
+      message('tie')
     elsif winner_and_loser.empty?
-      message('Everyone busted. No one won..')
+      message('everyone_busted')
     else
       winner = winner_and_loser.first
       loser = winner_and_loser.last
@@ -395,7 +376,7 @@ class Game
   end
 
   def reset_game
-    loading('Shuffling deck')
+    loading('shuffling')
     self.deck = Deck.new
     player.hand = []
     dealer.hand = []

@@ -1,0 +1,34 @@
+welcome: 'Welcome to Twenty-One!'
+goodbye: 'Thanks for playing Twenty-One. Goodbye!'
+name: 'Type your name:'
+rules:
+  - 'Objective: Get as close to 21 as possible with the total of your hand.'
+  - 'Points:    Cards add to your total.'
+  - '           Jack, Queen, and King are worth 10 points.'
+  - '           Ace is worth 1 or 11 points.'
+  - ''
+  - "Your turn:     You can 'hit' or 'stay'."
+  - "Dealer's turn: The dealer can also 'hit' or 'stay'."
+  - ""
+  - 'Hit:  Take 1 card from the dealer. Can hit as many times as ,you want.'
+  - 'Stay: Take no more cards, and your turn ends.'
+  - ''
+  - 'Bust: If your total goes over 21, you automatically lose.'
+  - "Tie:  If both players have the same total, it's a tie."
+ready: 'Are you ready to play?'
+check_rules: 'Do you want to check the rules?'
+mystery_card: 
+  - ' _______ '
+  - '|??     |'
+  - '|       |'
+  - '|   ??  |'
+  - '|       |'
+  - '|_____??|'
+  - ''
+invalid: 'Invalid input.'
+hit_or_stay: 'Hit or stay?'
+processing: 'Processing results'
+tie: "It's a tie!! Everyone has the same total."
+everyone_busted: 'Everyone busted. No one won..'
+suffling: 'Shuffling deck'
+play_again: 'Play again?'
