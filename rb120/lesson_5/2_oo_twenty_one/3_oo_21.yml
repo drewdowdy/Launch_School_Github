@@ -30,5 +30,5 @@ hit_or_stay: 'Hit or stay?'
 processing: 'Processing results'
 tie: "It's a tie!! Everyone has the same total."
 everyone_busted: 'Everyone busted. No one won..'
-suffling: 'Shuffling deck'
+shuffling: 'Shuffling deck'
 play_again: 'Play again?'

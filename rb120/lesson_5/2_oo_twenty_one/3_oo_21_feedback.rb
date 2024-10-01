@@ -3,8 +3,8 @@
 Feedback:
 
 [done] 1. Name shouldn't be a string of spaces
-       2. Display the total of each hand (player/dealer)
-       3. Dealer busted then 'chose to stay'
+[done] 2. Display the total of player's hand
+[done] 3. Dealer busted then 'chose to stay'
        4. Consider a `Player` superclass and `Human` and `Dealer` subclasses
        5. Round of games with scoreboard
 [done] 6. Place messages in a YML file
@@ -69,6 +69,7 @@ module Displayable
   end
 
   def loading(text='')
+    text = MESSAGES[text] if is_yml?(text)
     print ">> #{text}"
     2.times do
       sleep 0.5
@@ -133,12 +134,6 @@ class Player
     else
       self.name = ['Wall-E', 'The Terminator', 'Baymax'].sample
     end
-
-    private 
-
-    def invalid_name?(name)
-      name.strip.empty?
-    end
   end
 
   def rows(card)
@@ -180,6 +175,12 @@ class Player
       end
     end
     total
+  end
+
+  private
+
+  def invalid_name?(name)
+    name.strip.empty?
   end
 end
 
@@ -257,6 +258,7 @@ module Moveable
   end
 
   def stay(participant)
+    return if busted?(participant)
     loading("#{participant.name} chose to stay")
   end
 
@@ -299,6 +301,7 @@ class Game
     clear_screen
     message("#{player.name}'s Hand")
     player.show_hand
+    message("Total: #{player.total}")
     puts ''
     message("#{dealer.name}'s Hand")
 
