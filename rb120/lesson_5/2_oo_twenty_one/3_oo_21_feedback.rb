@@ -2,16 +2,16 @@
 
 Feedback:
 
-1. Name shouldn't be a string of spaces
-2. Display the total of each hand (player/dealer)
-3. Dealer busted then 'chose to stay'
-4. Consider a `Player` superclass and `Human` and `Dealer` subclasses
-5. Round of games with scoreboard
+[done] 1. Name shouldn't be a string of spaces
+       2. Display the total of each hand (player/dealer)
+       3. Dealer busted then 'chose to stay'
+       4. Consider a `Player` superclass and `Human` and `Dealer` subclasses
+       5. Round of games with scoreboard
 [done] 6. Place messages in a YML file
-7. `Game` class is too big
-  - one to orchestrate
-  - one for specific rounds
-8. Consider using `private` for method access control
+       7. `Game` class is too big
+         - one to orchestrate
+         - one for specific rounds
+       8. Consider using `private` for method access control
 
 =end
 
@@ -124,14 +124,20 @@ class Player
     if human?
       answer = nil
       loop do
-        message('Type your name:')
+        message('name')
         answer = gets.chomp
-        break unless answer.empty?
+        break unless invalid_name?(answer)
         message('invalid')
       end
       self.name = answer
     else
       self.name = ['Wall-E', 'The Terminator', 'Baymax'].sample
+    end
+
+    private 
+
+    def invalid_name?(name)
+      name.strip.empty?
     end
   end
 
