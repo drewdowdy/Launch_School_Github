@@ -3,7 +3,7 @@
 Feedback:
 
 [done] 1. Name shouldn't be a string of spaces
-[done] 2. Display the total of player's hand
+[done] 2. Display the total of player's/dealer's hand
 [done] 3. Dealer busted then 'chose to stay'
        4. Consider a `Player` superclass and `Human` and `Dealer` subclasses
        5. Round of games with scoreboard
@@ -208,6 +208,19 @@ class Dealer < Player
 
     rows.each { |row| puts row }
   end
+
+  def concealed_total
+    total = 0
+    hand[1..-1].map(&:face).each do |face|
+      total += Game::SCORES[face]
+    end
+    if total > 21
+      hand.map(&:face).count('A').times do
+        total -= 10
+      end
+    end
+    total
+  end
 end
 
 class Deck
@@ -307,8 +320,10 @@ class Game
 
     if @@reveal_dealer
       dealer.show_hand(reveal_dealer: true)
+      message("#{dealer.name}'s Total: #{dealer.total}")
     else
       dealer.show_hand
+      message("#{dealer.name}'s Total: #{dealer.concealed_total}")
     end
     puts ''
   end
