@@ -129,16 +129,6 @@ module Displayable
     banner("#{ultimate_winner.name} is the ultimate winner!")
   end
 
-  def show_dealer_hand
-    if reveal_dealer
-      dealer.show_hand(reveal_dealer: true)
-      message("Total: #{dealer.total}")
-    else
-      dealer.show_hand
-      message("Partial Total: #{dealer.concealed_total}")
-    end
-  end
-
   def show_cards
     clear_screen
     scoreboard
@@ -151,14 +141,6 @@ module Displayable
     puts ''
   end
 
-  def winner_and_loser_message
-    winner = winner_and_loser.first
-    loser = winner_and_loser.last
-    message("#{winner.name} is the winner with #{winner.total}.")
-    winner.score += 1
-    message("#{loser.name} is the loser with #{loser.total}.")
-  end
-
   def show_result
     self.reveal_dealer = true
     loading('processing')
@@ -169,6 +151,26 @@ module Displayable
       message('everyone_busted')
     else
       winner_and_loser_message
+    end
+  end
+
+  private 
+
+  def winner_and_loser_message
+    winner = winner_and_loser.first
+    loser = winner_and_loser.last
+    message("#{winner.name} is the winner with #{winner.total}.")
+    winner.score += 1
+    message("#{loser.name} is the loser with #{loser.total}.")
+  end
+
+  def show_dealer_hand
+    if reveal_dealer
+      dealer.show_hand(reveal_dealer: true)
+      message("Total: #{dealer.total}")
+    else
+      dealer.show_hand
+      message("Partial Total: #{dealer.concealed_total}")
     end
   end
 end
@@ -329,8 +331,19 @@ module Moveable
     loading("#{participant.name} chose to stay")
   end
 
-  def busted?(participant)
-    participant.total > 21
+  private
+
+  def deal_cards(num, *players)
+    card = num == 1 ? 'card' : 'cards'
+    people = players.map(&:name)
+    loading("Dealing out #{num} #{card} to #{people.join(' and ')}")
+    num.times do
+      players.each { |player| player.hand << deck.cards.pop }
+    end
+  end
+
+  def busted?(player)
+    player.total > 21
   end
 end
 
@@ -390,15 +403,6 @@ class Round
     @reveal_dealer = false
   end
 
-  def deal_cards(num, *participants)
-    card = num == 1 ? 'card' : 'cards'
-    people = participants.map(&:name)
-    loading("Dealing out #{num} #{card} to #{people.join(' and ')}")
-    num.times do
-      participants.each { |participant| participant.hand << deck.cards.pop }
-    end
-  end
-
   def human_turn
     move = nil
     loop do
@@ -455,6 +459,15 @@ class Game
     @deck = Deck.new
   end
 
+  def start
+    welcome_message
+    display_rules
+    main_game
+    goodbye_message
+  end
+
+  private
+
   def main_game
     loop do
       self.round = Round.new(human, dealer, deck)
@@ -464,13 +477,6 @@ class Game
       round.reset
       self.deck = Deck.new
     end
-  end
-
-  def start
-    welcome_message
-    display_rules
-    main_game
-    goodbye_message
   end
 end
 
