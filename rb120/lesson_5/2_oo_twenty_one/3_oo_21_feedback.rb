@@ -1,7 +1,6 @@
 =begin
 
 Feedback:
-
 [done] 1. Name shouldn't be a string of spaces
 [done] 2. Display the total of player's/dealer's hand
 [done] 3. Dealer busted then 'chose to stay'
@@ -45,9 +44,10 @@ module Messageable
   end
 
   def confirm?(question, pos_choice, neg_choice)
-    answer = nil
     question = MESSAGES[question] if is_yml?(question)
     formatted_question = "#{question} (#{pos_choice}/#{neg_choice})"
+
+    answer = nil
     loop do
       message(formatted_question)
       answer = gets.chomp.downcase
@@ -117,6 +117,42 @@ module Displayable
       ultimate_winner = dealer
     end
     banner("#{ultimate_winner.name} is the ultimate winner!")
+  end
+
+  def show_cards
+    clear_screen
+    scoreboard
+    message("#{human.name}'s Hand")
+    human.show_hand
+    message("Total: #{human.total}")
+    puts ''
+    message("#{dealer.name}'s Hand")
+
+    if @reveal_dealer
+      dealer.show_hand(reveal_dealer: true)
+      message("Total: #{dealer.total}")
+    else
+      dealer.show_hand
+      message("Partial Total: #{dealer.concealed_total}")
+    end
+    puts ''
+  end
+
+  def show_result
+    self.reveal_dealer = true
+    loading('processing')
+    show_cards
+    if tie?
+      message('tie')
+    elsif winner_and_loser.empty?
+      message('everyone_busted')
+    else
+      winner = winner_and_loser.first
+      loser = winner_and_loser.last
+      message("#{winner.name} is the winner with #{winner.total}.")
+      winner.score += 1
+      message("#{loser.name} is the loser with #{loser.total}.")
+    end
   end
 end
 
@@ -281,79 +317,7 @@ module Moveable
   end
 end
 
-class Round
-  attr_accessor :human, :dealer, :deck
-
-  include Messageable, Displayable, Moveable
-
-  SCORES = {
-    '2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6,
-    '7' => 7, '8' => 8, '9' => 9, '10' => 10,
-    'J' => 10, 'Q' => 10, 'K' => 10, 'A' => 11
-  }
-  WINNING_TOTAL = 21
-
-  @@reveal_dealer = false
-  @@round_number = 0
-  
-  def initialize(human, dealer, deck)
-    @human = human
-    @dealer = dealer
-    @deck = deck
-    @@round_number += 1
-  end
-
-  def deal_cards(num, *participants)
-    card = num == 1 ? 'card' : 'cards'
-    people = participants.map(&:name)
-    loading("Dealing out #{num} #{card} to #{people.join(' and ')}")
-    num.times do
-      participants.each { |participant| participant.hand << deck.cards.pop }
-    end
-  end
-
-  def show_cards
-    clear_screen
-    scoreboard
-    message("#{human.name}'s Hand")
-    human.show_hand
-    message("Total: #{human.total}")
-    puts ''
-    message("#{dealer.name}'s Hand")
-
-    if @@reveal_dealer
-      dealer.show_hand(reveal_dealer: true)
-      message("Total: #{dealer.total}")
-    else
-      dealer.show_hand
-      message("Partial Total: #{dealer.concealed_total}")
-    end
-    puts ''
-  end
-
-  def human_turn
-    move = nil
-    loop do
-      message('Hit or stay?(h/s)')
-      move = gets.chomp.downcase
-      break if %w(h s).include?(move)
-      message('invalid')
-    end
-
-    case move
-    when 'h' then hit(human)
-    when 's' then stay(human)
-    end
-  end
-
-  def dealer_turn
-    until dealer.total >= 17
-      loading("#{dealer.name} chose to hit")
-      hit(dealer)
-    end
-    stay(dealer)
-  end
-
+module Winnable
   def determine_winner
     dealer_diff = (WINNING_TOTAL - dealer.total).abs
     human_diff = (WINNING_TOTAL - human.total).abs
@@ -386,29 +350,67 @@ class Round
     end
   end
 
-  def show_result
-    @@reveal_dealer = true
-    loading('processing')
-    show_cards
-    if tie?
-      message('tie')
-    elsif winner_and_loser.empty?
-      message('everyone_busted')
-    else
-      winner = winner_and_loser.first
-      loser = winner_and_loser.last
-      message("#{winner.name} is the winner with #{winner.total}.")
-      winner.score += 1
-      message("#{loser.name} is the loser with #{loser.total}.")
+  def ultimate_winner?
+    human.score == 5 || dealer.score == 5
+  end
+end
+
+class Round
+  attr_accessor :human, :dealer, :deck, :reveal_dealer
+
+  include Messageable, Displayable, Moveable, Winnable
+
+  SCORES = {
+    '2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6,
+    '7' => 7, '8' => 8, '9' => 9, '10' => 10,
+    'J' => 10, 'Q' => 10, 'K' => 10, 'A' => 11
+  }
+  WINNING_TOTAL = 21
+
+  @@round_number = 0
+  
+  def initialize(human, dealer, deck)
+    @human = human
+    @dealer = dealer
+    @deck = deck
+    @@round_number += 1
+    @reveal_dealer = false
+  end
+
+  def deal_cards(num, *participants)
+    card = num == 1 ? 'card' : 'cards'
+    people = participants.map(&:name)
+    loading("Dealing out #{num} #{card} to #{people.join(' and ')}")
+    num.times do
+      participants.each { |participant| participant.hand << deck.cards.pop }
     end
+  end
+
+  def human_turn
+    move = nil
+    loop do
+      message('Hit or stay?(h/s)')
+      move = gets.chomp.downcase
+      break if %w(h s).include?(move)
+      message('invalid')
+    end
+
+    case move
+    when 'h' then hit(human)
+    when 's' then stay(human)
+    end
+  end
+
+  def dealer_turn
+    until dealer.total >= 17
+      loading("#{dealer.name} chose to hit")
+      hit(dealer)
+    end
+    stay(dealer)
   end
 
   def number
     @@round_number
-  end
-
-  def ultimate_winner?
-    human.score == 5 || dealer.score == 5
   end
 
   def play
@@ -423,7 +425,7 @@ class Round
     loading('shuffling')
     human.hand = []
     dealer.hand = []
-    @@reveal_dealer = false
+    self.reveal_dealer = false
   end
 end
 
@@ -437,14 +439,6 @@ class Game
     @human = Human.new
     @dealer = Dealer.new
     @deck = Deck.new
-  end
-
-  def reset_game
-    loading('shuffling')
-    self.deck = Deck.new
-    human.hand = []
-    dealer.hand = []
-    @@reveal_dealer = false
   end
 
   def play_again?
