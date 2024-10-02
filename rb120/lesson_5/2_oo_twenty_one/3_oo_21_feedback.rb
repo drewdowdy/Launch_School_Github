@@ -6,12 +6,13 @@ Feedback:
 [done] 2. Display the total of player's/dealer's hand
 [done] 3. Dealer busted then 'chose to stay'
 [done] 4. Consider a `Player` superclass and `Human` and `Dealer` subclasses
-       5. Round of games with scoreboard
+[done] 5. Round of games with scoreboard
 [done] 6. Place messages in a YML file
-       7. `Game` class is too big
+[done] 7. `Game` class is too big
          - one to orchestrate
          - one for specific rounds
        8. Consider using `private` for method access control
+[done] 9. Consider using `@value` in `Card` class
 
 =end
 
@@ -21,8 +22,8 @@ require 'yaml'
 MESSAGES = YAML.load_file('Launch_School_Github/rb120/lesson_5/2_oo_twenty_one/3_oo_21.yml')
 
 module Messageable
-  def message(*text)
-    text.each do |line| 
+  def message(*texts)
+    texts.each do |line| 
       if is_yml?(line)
         puts ">> #{MESSAGES[line]}"
       else 
@@ -31,17 +32,15 @@ module Messageable
     end
   end
 
-  def banner(text)
-    if is_yml?(text)
-      text = MESSAGES[text]
-    end
+  def banner(*texts)
+    texts.map! { |line| is_yml?(line) ? MESSAGES[line] : line }
 
-    width = text.size + 4
+    width = texts.max.size + 4
     edge = "+#{'-' * width}+"
     blank = "|#{' ' * width}|"
 
     puts edge, blank
-    puts "|#{text.center(width)}|"
+    texts.each { |line| puts "|#{line.center(width)}|" }
     puts blank, edge
   end
 
@@ -87,6 +86,7 @@ module Displayable
   def goodbye_message
     loading
     clear_screen
+    show_ultimate_winner if round.ultimate_winner?
     banner('goodbye')
   end
 
@@ -105,22 +105,36 @@ module Displayable
       loading('Take your time')
     end
   end
+
+  def scoreboard
+    banner("Round #{number}", "#{human.name}: #{human.score}", "#{dealer.name}: #{dealer.score}")
+  end
+
+  def show_ultimate_winner
+    if human.score == 5
+      ultimate_winner = human
+    elsif dealer.score == 5
+      ultimate_winner = dealer
+    end
+    banner("#{ultimate_winner.name} is the ultimate winner!")
+  end
 end
 
 class Player
-  attr_accessor :hand, :name
+  attr_accessor :hand, :name, :score
 
   include Messageable
 
   def initialize
     @hand = []
+    @score = 0
     set_name
   end
 
   def rows(card)
     top_corner = card.face == '10' ? card.face : "#{card.face} "
     bottom_corner = card.face == '10' ? card.face : "_#{card.face}"
-    suit = Card::SUIT_SYMBOLS[card.suit]
+    suit = Card::SYMBOLS[card.suit]
     [
       " _______ ",
       "|#{top_corner}     |",
@@ -147,9 +161,7 @@ class Player
 
   def total
     total = 0
-    hand.map(&:face).each do |face|
-      total += Game::SCORES[face]
-    end
+    hand.each { |card| total += card.value }
     if total > 21
       hand.map(&:face).count('A').times do
         total -= 10
@@ -203,13 +215,9 @@ class Dealer < Player
 
   def concealed_total
     total = 0
-    hand[1..-1].map(&:face).each do |face|
-      total += Game::SCORES[face]
-    end
+    hand[1..-1].each { |card| total += card.value }
     if total > 21
-      hand.map(&:face).count('A').times do
-        total -= 10
-      end
+      hand[1..-1].each { |card| total -= 10 if card.face == 'A' }
     end
     total
   end
@@ -232,21 +240,22 @@ class Deck
 end
 
 class Card
-  attr_reader :face, :suit
+  attr_reader :face, :suit, :value
 
-  FACES = %w(2 3 4 5 6 7 8 9 10 A J Q K)
+  FACES = %w(2 3 4 5 6 7 8 9 10 J Q K A)
   SUITS = %w(D C H S)
-
-  SUIT_SYMBOLS = {
+  SYMBOLS = {
     'D' => '♦',
     'C' => '♣',
     'H' => '♥',
     'S' => '♠'
   }
+  VALUES = FACES.zip([2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11]).to_h
 
   def initialize(face, suit)
     @face = face
     @suit = suit
+    @value = VALUES[@face]
   end
 end
 
@@ -272,8 +281,10 @@ module Moveable
   end
 end
 
-class Game
+class Round
   attr_accessor :human, :dealer, :deck
+
+  include Messageable, Displayable, Moveable
 
   SCORES = {
     '2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6,
@@ -283,14 +294,13 @@ class Game
   WINNING_TOTAL = 21
 
   @@reveal_dealer = false
-
-  include Messageable, Displayable, Moveable
-
-  def initialize
-    clear_screen
-    @human = Human.new
-    @dealer = Dealer.new
-    @deck = Deck.new
+  @@round_number = 0
+  
+  def initialize(human, dealer, deck)
+    @human = human
+    @dealer = dealer
+    @deck = deck
+    @@round_number += 1
   end
 
   def deal_cards(num, *participants)
@@ -304,18 +314,19 @@ class Game
 
   def show_cards
     clear_screen
+    scoreboard
     message("#{human.name}'s Hand")
     human.show_hand
-    message("#{human.name}'s Total: #{human.total}")
+    message("Total: #{human.total}")
     puts ''
     message("#{dealer.name}'s Hand")
 
     if @@reveal_dealer
       dealer.show_hand(reveal_dealer: true)
-      message("#{dealer.name}'s Total: #{dealer.total}")
+      message("Total: #{dealer.total}")
     else
       dealer.show_hand
-      message("#{dealer.name}'s Partial Total: #{dealer.concealed_total}")
+      message("Partial Total: #{dealer.concealed_total}")
     end
     puts ''
   end
@@ -387,8 +398,45 @@ class Game
       winner = winner_and_loser.first
       loser = winner_and_loser.last
       message("#{winner.name} is the winner with #{winner.total}.")
+      winner.score += 1
       message("#{loser.name} is the loser with #{loser.total}.")
     end
+  end
+
+  def number
+    @@round_number
+  end
+
+  def ultimate_winner?
+    human.score == 5 || dealer.score == 5
+  end
+
+  def play
+    deal_cards(2, human, dealer)
+    show_cards
+    human_turn
+    dealer_turn
+    show_result
+  end
+
+  def reset
+    loading('shuffling')
+    human.hand = []
+    dealer.hand = []
+    @@reveal_dealer = false
+  end
+end
+
+class Game
+  attr_accessor :human, :dealer, :deck, :round
+
+  include Messageable, Displayable, Moveable
+
+  def initialize
+    clear_screen
+    @human = Human.new
+    @dealer = Dealer.new
+    @deck = Deck.new
   end
 
   def reset_game
@@ -399,20 +447,19 @@ class Game
     @@reveal_dealer = false
   end
 
-  def main_game
-    loop do
-      deal_cards(2, human, dealer)
-      show_cards
-      human_turn
-      dealer_turn
-      show_result
-      return unless play_again?
-      reset_game
-    end
-  end
-
   def play_again?
     confirm?('Play again?', 'y', 'n')
+  end
+
+  def main_game
+    loop do
+      self.round = Round.new(human, dealer, deck)
+      round.play
+      return if round.ultimate_winner?
+      return unless play_again?
+      round.reset
+      self.deck = Deck.new
+    end
   end
 
   def start
