@@ -3,7 +3,7 @@
 Feedback:
 [done] 1. Name shouldn't be a string of spaces
 [done] 2. Display the total of player's/dealer's hand
-[done] 3. Dealer busted then 'chose to stay'
+[done] 3. Dealer shouldn't bust then 'chose to stay'
 [done] 4. Consider a `Player` superclass and `Human` and `Dealer` subclasses
 [done] 5. Round of games with scoreboard
 [done] 6. Place messages in a YML file
