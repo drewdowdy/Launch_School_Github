@@ -96,6 +96,10 @@ module Displayable
     confirm?('ready', 'y', 'n')
   end
 
+  def play_again?
+    confirm?('Play again?', 'y', 'n')
+  end
+
   def display_rules
     return unless confirm?('check_rules', 'y', 'n')
     loop do
@@ -266,7 +270,7 @@ class Dealer < Player
 end
 
 class Deck
-  attr_accessor :cards
+  attr_reader :cards
 
   def initialize
     @cards = []
@@ -442,10 +446,6 @@ class Game
     @human = Human.new
     @dealer = Dealer.new
     @deck = Deck.new
-  end
-
-  def play_again?
-    confirm?('Play again?', 'y', 'n')
   end
 
   def main_game
