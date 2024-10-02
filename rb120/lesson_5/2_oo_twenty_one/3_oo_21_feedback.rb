@@ -352,15 +352,11 @@ module Winnable
   end
 
   def winner_and_loser
-    if busted?(human) && !busted?(dealer)
-      [dealer, human]
-    elsif busted?(dealer) && !busted?(human)
-      [human, dealer]
-    elsif busted?(human) && busted?(dealer)
-      []
-    else
-      determine_winner
-    end
+    return [] if busted?(human) && busted?(dealer)
+    return [dealer, human] if busted?(human)
+    return [human, dealer] if busted?(dealer)
+
+    determine_winner
   end
 
   def tie?
@@ -401,10 +397,8 @@ class Round
       message('invalid')
     end
 
-    case move
-    when 'h' then hit(human)
-    when 's' then stay(human)
-    end
+    hit(human) if move == 'h'
+    stay(human) if move == 's'
   end
 
   def dealer_turn
