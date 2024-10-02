@@ -304,20 +304,20 @@ class Card
 end
 
 module Moveable
-  def hit(participant)
-    deal_cards(1, participant)
+  def hit(player)
+    deal_cards(1, player)
     show_cards
-    if busted?(participant)
-      loading("#{participant.name} busted")
+    if busted?(player)
+      loading("#{player.name} busted")
       return
     end
-    return unless participant.instance_of?(Human)
-    confirm?('hit_or_stay', 'h', 's') ? hit(participant) : stay(participant)
+    return unless player.instance_of?(Human)
+    confirm?('hit_or_stay', 'h', 's') ? hit(player) : stay(player)
   end
 
-  def stay(participant)
-    return if busted?(participant)
-    loading("#{participant.name} chose to stay")
+  def stay(player)
+    return if busted?(player)
+    loading("#{player.name} chose to stay")
   end
 
   private
