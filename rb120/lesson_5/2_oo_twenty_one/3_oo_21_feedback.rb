@@ -25,11 +25,8 @@ MESSAGES = YAML.load_file(
 module Messageable
   def message(*texts)
     texts.each do |line|
-      if yaml?(line)
-        puts ">> #{MESSAGES[line]}"
-      else
-        puts ">> #{line}"
-      end
+      line = yaml?(line) ? ">> #{MESSAGES[line]}" : ">> #{line}"
+      puts line
     end
   end
 
@@ -37,7 +34,7 @@ module Messageable
     texts.map! { |line| yaml?(line) ? MESSAGES[line] : line }
     longest_line = texts.max_by(&:size)
     width = longest_line.size + 4
-    
+
     edge = "+#{'-' * width}+"
     blank = "|#{' ' * width}|"
 
