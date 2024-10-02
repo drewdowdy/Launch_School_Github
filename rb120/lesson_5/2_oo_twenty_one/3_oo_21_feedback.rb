@@ -18,21 +18,23 @@ Feedback:
 require 'pry'
 require 'yaml'
 
-MESSAGES = YAML.load_file('Launch_School_Github/rb120/lesson_5/2_oo_twenty_one/3_oo_21.yml')
+MESSAGES = YAML.load_file(
+  'Launch_School_Github/rb120/lesson_5/2_oo_twenty_one/3_oo_21.yml'
+)
 
 module Messageable
   def message(*texts)
-    texts.each do |line| 
-      if is_yml?(line)
+    texts.each do |line|
+      if yaml?(line)
         puts ">> #{MESSAGES[line]}"
-      else 
+      else
         puts ">> #{line}"
       end
     end
   end
 
   def banner(*texts)
-    texts.map! { |line| is_yml?(line) ? MESSAGES[line] : line }
+    texts.map! { |line| yaml?(line) ? MESSAGES[line] : line }
 
     width = texts.max.size + 4
     edge = "+#{'-' * width}+"
@@ -44,7 +46,7 @@ module Messageable
   end
 
   def confirm?(question, pos_choice, neg_choice)
-    question = MESSAGES[question] if is_yml?(question)
+    question = MESSAGES[question] if yaml?(question)
     formatted_question = "#{question} (#{pos_choice}/#{neg_choice})"
 
     answer = nil
@@ -57,7 +59,7 @@ module Messageable
     answer == pos_choice
   end
 
-  def is_yml?(text)
+  def yaml?(text)
     MESSAGES.key?(text)
   end
 end
@@ -68,7 +70,7 @@ module Displayable
   end
 
   def loading(text='')
-    text = MESSAGES[text] if is_yml?(text)
+    text = MESSAGES[text] if yaml?(text)
     print ">> #{text}"
     2.times do
       sleep 0.5
@@ -107,7 +109,11 @@ module Displayable
   end
 
   def scoreboard
-    banner("Round #{number}", "#{human.name}: #{human.score}", "#{dealer.name}: #{dealer.score}")
+    banner(
+      "Round #{number}",
+      "#{human.name}: #{human.score}",
+      "#{dealer.name}: #{dealer.score}"
+    )
   end
 
   def show_ultimate_winner
@@ -318,6 +324,8 @@ module Moveable
 end
 
 module Winnable
+  WINNING_TOTAL = 21
+
   def determine_winner
     dealer_diff = (WINNING_TOTAL - dealer.total).abs
     human_diff = (WINNING_TOTAL - human.total).abs
@@ -356,19 +364,13 @@ module Winnable
 end
 
 class Round
-  attr_accessor :human, :dealer, :deck, :reveal_dealer
+  attr_accessor :reveal_dealer
+  attr_reader :human, :dealer, :deck
 
   include Messageable, Displayable, Moveable, Winnable
 
-  SCORES = {
-    '2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6,
-    '7' => 7, '8' => 8, '9' => 9, '10' => 10,
-    'J' => 10, 'Q' => 10, 'K' => 10, 'A' => 11
-  }
-  WINNING_TOTAL = 21
-
   @@round_number = 0
-  
+
   def initialize(human, dealer, deck)
     @human = human
     @dealer = dealer
@@ -430,9 +432,10 @@ class Round
 end
 
 class Game
-  attr_accessor :human, :dealer, :deck, :round
+  attr_accessor :deck, :round
+  attr_reader :human, :dealer
 
-  include Messageable, Displayable, Moveable
+  include Messageable, Displayable
 
   def initialize
     clear_screen
