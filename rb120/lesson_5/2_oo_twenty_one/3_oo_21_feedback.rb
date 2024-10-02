@@ -35,8 +35,9 @@ module Messageable
 
   def banner(*texts)
     texts.map! { |line| yaml?(line) ? MESSAGES[line] : line }
-
-    width = texts.max.size + 4
+    longest_line = texts.max_by(&:size)
+    width = longest_line.size + 4
+    
     edge = "+#{'-' * width}+"
     blank = "|#{' ' * width}|"
 
