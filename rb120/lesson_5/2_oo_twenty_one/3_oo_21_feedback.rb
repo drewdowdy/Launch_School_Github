@@ -154,7 +154,7 @@ module Displayable
     end
   end
 
-  private 
+  private
 
   def winner_and_loser_message
     winner = winner_and_loser.first
@@ -186,21 +186,6 @@ class Player
     set_name
   end
 
-  def rows(card)
-    top_corner = card.face == '10' ? card.face : "#{card.face} "
-    bottom_corner = card.face == '10' ? card.face : "_#{card.face}"
-    suit = Card::SYMBOLS[card.suit]
-    [
-      " _______ ",
-      "|#{top_corner}     |",
-      "|       |",
-      "|   #{suit}   |",
-      "|       |",
-      "|_____#{bottom_corner}|",
-      ''
-    ]
-  end
-
   def show_hand
     rows = []
     6.times { rows << '' }
@@ -223,6 +208,20 @@ class Player
       end
     end
     total
+  end
+
+  private
+
+  def rows(card)
+    [
+      " _______ ",
+      "|#{card.face == '10' ? card.face : "#{card.face} "}     |",
+      "|       |",
+      "|   #{Card::SYMBOLS[card.suit]}   |",
+      "|       |",
+      "|_____#{card.face == '10' ? card.face : "_#{card.face}"}|",
+      ''
+    ]
   end
 end
 
@@ -250,21 +249,11 @@ class Dealer < Player
       return
     end
 
-    rows = []
-    6.times { rows << '' }
-
+    rows = ['', '', '', '', '', '']
     hand.each_with_index do |card, card_idx|
-      card_rows =
-        if card_idx == 0
-          MESSAGES['mystery_card']
-        else
-          rows(card)
-        end
-      (0..5).each do |i|
-        rows[i] += card_rows[i]
-      end
+      card_rows = card_idx == 0 ? MESSAGES['mystery_card'] : rows(card)
+      (0..5).each { |i| rows[i] += card_rows[i] }
     end
-
     rows.each { |row| puts row }
   end
 
