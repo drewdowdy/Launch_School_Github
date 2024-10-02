@@ -10,7 +10,7 @@ Feedback:
 [done] 7. `Game` class is too big
          - one to orchestrate
          - one for specific rounds
-       8. Consider using `private` for method access control
+[done] 8. Consider using `private` for method access control
 [done] 9. Consider using `@value` in `Card` class
 
 =end
