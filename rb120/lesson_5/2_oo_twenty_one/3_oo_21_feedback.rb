@@ -57,6 +57,8 @@ module Messageable
     answer == pos_choice
   end
 
+  private
+
   def yaml?(text)
     MESSAGES.key?(text)
   end
