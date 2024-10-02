@@ -148,6 +148,14 @@ module Displayable
     puts ''
   end
 
+  def winner_and_loser_message
+    winner = winner_and_loser.first
+    loser = winner_and_loser.last
+    message("#{winner.name} is the winner with #{winner.total}.")
+    winner.score += 1
+    message("#{loser.name} is the loser with #{loser.total}.")
+  end
+
   def show_result
     self.reveal_dealer = true
     loading('processing')
@@ -157,11 +165,7 @@ module Displayable
     elsif winner_and_loser.empty?
       message('everyone_busted')
     else
-      winner = winner_and_loser.first
-      loser = winner_and_loser.last
-      message("#{winner.name} is the winner with #{winner.total}.")
-      winner.score += 1
-      message("#{loser.name} is the loser with #{loser.total}.")
+      winner_and_loser_message
     end
   end
 end
