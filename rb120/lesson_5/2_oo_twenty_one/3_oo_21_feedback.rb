@@ -129,6 +129,16 @@ module Displayable
     banner("#{ultimate_winner.name} is the ultimate winner!")
   end
 
+  def show_dealer_hand
+    if reveal_dealer
+      dealer.show_hand(reveal_dealer: true)
+      message("Total: #{dealer.total}")
+    else
+      dealer.show_hand
+      message("Partial Total: #{dealer.concealed_total}")
+    end
+  end
+
   def show_cards
     clear_screen
     scoreboard
@@ -137,14 +147,7 @@ module Displayable
     message("Total: #{human.total}")
     puts ''
     message("#{dealer.name}'s Hand")
-
-    if reveal_dealer
-      dealer.show_hand(reveal_dealer: true)
-      message("Total: #{dealer.total}")
-    else
-      dealer.show_hand
-      message("Partial Total: #{dealer.concealed_total}")
-    end
+    show_dealer_hand
     puts ''
   end
 
