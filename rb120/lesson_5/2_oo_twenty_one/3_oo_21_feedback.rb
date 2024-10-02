@@ -138,7 +138,7 @@ module Displayable
     puts ''
     message("#{dealer.name}'s Hand")
 
-    if @reveal_dealer
+    if reveal_dealer
       dealer.show_hand(reveal_dealer: true)
       message("Total: #{dealer.total}")
     else
