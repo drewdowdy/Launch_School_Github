@@ -424,7 +424,7 @@ class Round
   end
 
   def reset
-    loading('shuffling')
+    loading('reset')
     human.hand = []
     dealer.hand = []
     self.reveal_dealer = false
