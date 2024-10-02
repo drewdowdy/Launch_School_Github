@@ -5,7 +5,7 @@ Feedback:
 [done] 1. Name shouldn't be a string of spaces
 [done] 2. Display the total of player's/dealer's hand
 [done] 3. Dealer busted then 'chose to stay'
-       4. Consider a `Player` superclass and `Human` and `Dealer` subclasses
+[done] 4. Consider a `Player` superclass and `Human` and `Dealer` subclasses
        5. Round of games with scoreboard
 [done] 6. Place messages in a YML file
        7. `Game` class is too big
@@ -117,25 +117,6 @@ class Player
     set_name
   end
 
-  def human?
-    instance_of?(Player)
-  end
-
-  def set_name
-    if human?
-      answer = nil
-      loop do
-        message('name')
-        answer = gets.chomp
-        break unless invalid_name?(answer)
-        message('invalid')
-      end
-      self.name = answer
-    else
-      self.name = ['Wall-E', 'The Terminator', 'Baymax'].sample
-    end
-  end
-
   def rows(card)
     top_corner = card.face == '10' ? card.face : "#{card.face} "
     bottom_corner = card.face == '10' ? card.face : "_#{card.face}"
@@ -176,15 +157,26 @@ class Player
     end
     total
   end
+end
 
-  private
-
-  def invalid_name?(name)
-    name.strip.empty?
+class Human < Player
+  def set_name
+    answer = nil
+    loop do
+      message('name')
+      answer = gets.chomp
+      break unless answer.strip.empty?
+      message('invalid')
+    end
+    self.name = answer
   end
 end
 
 class Dealer < Player
+  def set_name
+    self.name = ['Wall-E', 'The Terminator', 'Baymax'].sample
+  end
+
   def show_hand(reveal_dealer: false)
     if reveal_dealer
       super()
@@ -266,7 +258,7 @@ module Moveable
       loading("#{participant.name} busted")
       return
     end
-    return unless participant.instance_of?(Player)
+    return unless participant.instance_of?(Human)
     confirm?('hit_or_stay', 'h', 's') ? hit(participant) : stay(participant)
   end
 
@@ -281,7 +273,7 @@ module Moveable
 end
 
 class Game
-  attr_accessor :player, :dealer, :deck
+  attr_accessor :human, :dealer, :deck
 
   SCORES = {
     '2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6,
@@ -296,7 +288,7 @@ class Game
 
   def initialize
     clear_screen
-    @player = Player.new
+    @human = Human.new
     @dealer = Dealer.new
     @deck = Deck.new
   end
@@ -312,9 +304,9 @@ class Game
 
   def show_cards
     clear_screen
-    message("#{player.name}'s Hand")
-    player.show_hand
-    message("Total: #{player.total}")
+    message("#{human.name}'s Hand")
+    human.show_hand
+    message("#{human.name}'s Total: #{human.total}")
     puts ''
     message("#{dealer.name}'s Hand")
 
@@ -323,12 +315,12 @@ class Game
       message("#{dealer.name}'s Total: #{dealer.total}")
     else
       dealer.show_hand
-      message("#{dealer.name}'s Total: #{dealer.concealed_total}")
+      message("#{dealer.name}'s Partial Total: #{dealer.concealed_total}")
     end
     puts ''
   end
 
-  def player_turn
+  def human_turn
     move = nil
     loop do
       message('Hit or stay?(h/s)')
@@ -338,8 +330,8 @@ class Game
     end
 
     case move
-    when 'h' then hit(player)
-    when 's' then stay(player)
+    when 'h' then hit(human)
+    when 's' then stay(human)
     end
   end
 
@@ -353,22 +345,22 @@ class Game
 
   def determine_winner
     dealer_diff = (WINNING_TOTAL - dealer.total).abs
-    player_diff = (WINNING_TOTAL - player.total).abs
-    differences = [dealer_diff, player_diff]
+    human_diff = (WINNING_TOTAL - human.total).abs
+    differences = [dealer_diff, human_diff]
     case differences.min
-    when player_diff
-      [player, dealer]
+    when human_diff
+      [human, dealer]
     when dealer_diff
-      [dealer, player]
+      [dealer, human]
     end
   end
 
   def winner_and_loser
-    if busted?(player) && !busted?(dealer)
-      [dealer, player]
-    elsif busted?(dealer) && !busted?(player)
-      [player, dealer]
-    elsif busted?(player) && busted?(dealer)
+    if busted?(human) && !busted?(dealer)
+      [dealer, human]
+    elsif busted?(dealer) && !busted?(human)
+      [human, dealer]
+    elsif busted?(human) && busted?(dealer)
       []
     else
       determine_winner
@@ -376,8 +368,8 @@ class Game
   end
 
   def tie?
-    if !busted?(player) && !busted?(dealer)
-      player.total == dealer.total
+    if !busted?(human) && !busted?(dealer)
+      human.total == dealer.total
     else
       false
     end
@@ -402,16 +394,16 @@ class Game
   def reset_game
     loading('shuffling')
     self.deck = Deck.new
-    player.hand = []
+    human.hand = []
     dealer.hand = []
     @@reveal_dealer = false
   end
 
   def main_game
     loop do
-      deal_cards(2, player, dealer)
+      deal_cards(2, human, dealer)
       show_cards
-      player_turn
+      human_turn
       dealer_turn
       show_result
       return unless play_again?
