@@ -19,7 +19,7 @@ require 'pry'
 require 'yaml'
 
 MESSAGES = YAML.load_file(
-  'Launch_School_Github/rb120/lesson_5/2_oo_twenty_one/3_oo_21.yml'
+  'Launch_School_Github/rb120/lesson_5/2_oo_twenty_one/oo_21_feedback/oo_21.yml'
 )
 
 module Messageable
