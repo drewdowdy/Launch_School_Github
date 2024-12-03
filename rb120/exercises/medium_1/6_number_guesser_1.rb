@@ -27,8 +27,7 @@ class GuessingGame
 
   private
 
-  attr_reader :correct_number
-  attr_accessor :remaining_guesses, :current_guess, :winner
+  attr_accessor :correct_number, :remaining_guesses, :current_guess, :winner
 
   def display_remaining_guesses
     puts '', "You have #{remaining_guesses} guesses remaining."
@@ -85,35 +84,44 @@ I think it would be a good idea to implement a `Player` class if we plan to do s
 > What methods and data should be part of it?
 
 ```ruby
-
-```
-
-> How many Player objects do you need?
-  
-> Should you use inheritance, a mix-in module, or a collaborative object?
-
-=end
-
 class Player
   def initialize
     @name = set_name
     @score = 0
+    @remaining_guesses = 7
   end
+
+  def make_guess
+    # get the guess input from user
+    # could initialize a @current_guess instance variabe
+  end
+
+  def increment_score
+    # increase score IF guess is correct
+  end
+
+  def reduce_remaining_guesses
+    # reduce remaining guesses after a guess has been made
+  end
+  
+  private
 
   def set_name
-    name = nil
-    loop do 
-      print "What is your name? "
-      name = gets.chomp
-      break if valid_name?(name)
-      print 'Invalid input. '
-    end
-    name
+    # allow player to set name
   end
 
-  private 
-
-  def valid_name?(name)
-    name =~ /[a-z]/i
+  def valid_name?
+    # vaidate the players name
   end
 end
+```
+
+> How many Player objects do you need?
+  
+You could have 1 player guessing on their own. Or you could have a number of players guessing with their own number of chances.
+
+> Should you use inheritance, a mix-in module, or a collaborative object?
+
+For a Player, it would be best to use a collaborator object. That way each 'player' could keep track of their own remaining guesses and current guesses, and scores in the states of their objects.
+
+=end
