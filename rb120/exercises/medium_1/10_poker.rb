@@ -115,8 +115,7 @@ class PokerHand
   private
 
   def royal_flush?
-    all_same_suit = hand.all? { |card| hand[0].suit == card.suit }
-    all_same_suit && flush?
+    flush? && hand.sort.map{ |card| card.rank } == [10] + %w(Jack Queen King Ace)
   end
 
   def straight_flush?
@@ -124,24 +123,34 @@ class PokerHand
   end
 
   def four_of_a_kind?
-    hand.count { |card| hand[0].suit == card.suit } == 4
+    hand.count { |card| hand[0].rank == card.rank } == 4
   end
 
   def full_house?
+    sorted = hand.sort
+    count1 = sorted.count { |card| sorted[0].rank == card.rank }
+    count2 = sorted.count { |card| sorted[-1].rank == card.rank }
+    [count1, count2].sort == [2, 3]
   end
 
   def flush?
-    hand.sort.map{ |card| card.rank } == [10] + %w(Jack Queen King Ace)
+    hand.all? { |card| hand[0].suit == card.suit }
   end
 
   def straight?
-
+    sorted = hand.sort
+    (1...hand.size).all? do |idx|
+      current_card_value = Card::RANKING_ORDER[sorted[idx].rank]
+      previous_card_value = Card::RANKING_ORDER[sorted[idx - 1].rank]
+  
+      previous_card_value == current_card_value - 1
+    end
   end
 
   def three_of_a_kind?
-    sorted_by_rank = hand.sort
+    sorted = hand.sort
     (0...hand.size - 2).any? do |idx|
-      [hand[idx].rank, hand[idx + 1].rank, hand[idx + 2].rank].all? { |card| card == hand[idx].rank}
+      [sorted[idx].rank, sorted[idx + 1].rank, sorted[idx + 2].rank].all? { |card| card == sorted[idx].rank}
     end
   end
 
@@ -172,10 +181,10 @@ hand.print
 puts hand.evaluate
 
 # Danger danger danger: monkey
-# patching for testing purposes.
-class Array
-  alias_method :draw, :pop
-end
+# # patching for testing purposes.
+# class Array
+#   alias_method :draw, :pop
+# end
 
 # Test that we can identify each PokerHand type.
 hand = PokerHand.new([
