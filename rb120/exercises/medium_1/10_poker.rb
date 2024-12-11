@@ -150,11 +150,20 @@ class PokerHand
   def three_of_a_kind?
     sorted = hand.sort
     (0...hand.size - 2).any? do |idx|
-      [sorted[idx].rank, sorted[idx + 1].rank, sorted[idx + 2].rank].all? { |card| card == sorted[idx].rank}
+      three_group = [sorted[idx].rank, sorted[idx + 1].rank, sorted[idx + 2].rank]
+      three_group.all? { |card| card == sorted[idx].rank}
     end
   end
 
   def two_pair?
+    count_pairs(2)
+  end
+
+  def pair?
+    count_pairs(1)
+  end
+
+  def count_pairs(pair_num)
     pair_count = 0
 
     (0...hand.size).each do |idx1|
@@ -163,16 +172,7 @@ class PokerHand
       end
     end
 
-    pair_count == 2
-  end
-
-  def pair?
-    (0...hand.size).each do |idx1|
-      ((idx1 + 1)...hand.size).each do |idx2|
-        return true if hand[idx1].rank == hand[idx2].rank
-      end
-    end
-    false
+    pair_count == pair_num
   end
 end
 
