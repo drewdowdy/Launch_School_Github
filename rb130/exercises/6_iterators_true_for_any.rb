@@ -32,7 +32,12 @@ def second_any?(collection)
   !!collection.find { |element| yield(element) }
 end
 
-p second_any?([1, 3, 5, 6]) { |value| value.even? } == true
-p second_any?([2, 4, 6, 8]) { |value| value.odd? } == false
-p second_any?({a:0, b:1, c:2}) { |k, v| v.even? } == true
-p second_any?({a:0, b:1, c:2}) { |k, v| v > 3 } == false
+def any?(array)
+  array.each { |e| return true if yield(e) }
+  false
+end
+
+p any?([1, 3, 5, 6]) { |value| value.even? } == true
+p any?([2, 4, 6, 8]) { |value| value.odd? } == false
+p any?({a:0, b:1, c:2}) { |k, v| v.even? } == true
+p any?({a:0, b:1, c:2}) { |k, v| v > 3 } == false
