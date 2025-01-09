@@ -8,7 +8,7 @@ class EasyTest < Minitest::Test
   end
 
   def test_odd
-    assert_equal(true, @num.odd?)
     assert @num.odd?, 'Number is not odd.'
+    # assert_equal(true, @num.odd?) <-- more common
   end
 end
