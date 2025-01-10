@@ -71,11 +71,22 @@ class SandwichTextAnalyzer
   end
 end
 
-file_1 = 'Launch_School_Github/rb130/exercises/medium_1/2_texts/standard_text_input.txt'
-
 puts ''
 
 analyzer = SandwichTextAnalyzer.new
-analyzer.process(file_1) { |text| puts "#{text.split("\n\n").size} paragraphs" }
-analyzer.process(file_1) { |text| puts "#{text.split("\n").size} lines" }
-analyzer.process(file_1) { |text| puts "#{text.split.size} words" }
+analyzer.process(text_1) { |text| puts "#{text.split("\n\n").size} paragraphs" }
+analyzer.process(text_1) { |text| puts "#{text.split("\n").size} lines" }
+analyzer.process(text_1) { |text| puts "#{text.split.size} words" }
+
+puts ''
+
+analyzer.process(text_2) { |text| puts "#{text.split("\n\n").size} paragraphs" }
+analyzer.process(text_2) { |text| puts "#{text.split("\n").size} lines" }
+analyzer.process(text_2) { |text| puts "#{text.split.size} words" }
+
+puts ''
+
+analyzer.process(text_3) { |text| puts "#{text.split("\n\n").size} paragraphs" }
+analyzer.process(text_3) { |text| puts "#{text.split("\n").size} lines" }
+analyzer.process(text_3) { |text| puts "#{text.split.size} words" }
+
