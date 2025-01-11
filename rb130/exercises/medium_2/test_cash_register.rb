@@ -7,20 +7,30 @@ require_relative 'transaction'
 
 class CashRegisterTest < Minitest::Test
   def test_accept_money
-    @cash_register = CashRegister.new(100)
-    @transaction = Transaction.new(25)
-    @transaction.amount_paid = 30
+    register = CashRegister.new(100)
+    transaction = Transaction.new(25)
+    transaction.amount_paid = 30
 
-    result = @cash_register.accept_money(@transaction)
+    result = register.accept_money(transaction)
     assert_equal(130, result)
   end
 
   def test_change
-    @cash_register = CashRegister.new(100)
-    @transaction = Transaction.new(25)
-    @transaction.amount_paid = 30
+    register = CashRegister.new(100)
+    transaction = Transaction.new(25)
+    transaction.amount_paid = 30
 
-    result = @cash_register.change(@transaction)
+    result = register.change(transaction)
     assert_equal(5, result)
+  end
+
+  def test_give_reciept
+    register = CashRegister.new(100)
+    item_cost = 25
+    transaction = Transaction.new(item_cost)
+    
+    assert_output("You've paid $#{item_cost}.\n") do 
+      register.give_receipt(transaction)
+    end
   end
 end
