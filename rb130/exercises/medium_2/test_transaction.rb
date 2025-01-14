@@ -9,9 +9,10 @@ class TransactionTest < Minitest::Test
     cost = 25
     transaction = Transaction.new(cost)
     good_input = StringIO.new("30\n")
+    output = StringIO.new
     bad_to_good_input = StringIO.new("20\n35\n")
 
-    transaction.prompt_for_payment(input: good_input)
+    transaction.prompt_for_payment(input: good_input, output: output)
     assert_equal(30, transaction.amount_paid)
 
     bad_output = <<~OUTPUT
