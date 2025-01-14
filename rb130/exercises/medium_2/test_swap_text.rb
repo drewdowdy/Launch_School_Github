@@ -34,6 +34,6 @@ class SwapTextTest < Minitest::Test
 
   def teardown
     @file.close
-    puts "File has been closed: #{@file.closed?}"
+    puts "\nFile has been closed: #{@file.closed?}"
   end
 end
