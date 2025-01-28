@@ -42,14 +42,14 @@ class Clock
   end
 
   def +(min)
-    new_total = (@total_min + min) % MINUTES_IN_DAY
-    hours, minutes = min.divmod(MINUTES_IN_HOUR)
+    new_total = (total_min + min) % MINUTES_IN_DAY
+    hours, minutes = new_total.divmod(MINUTES_IN_HOUR)
     Clock.new(hours, minutes)
   end
 
   def -(min)
-    new_total = (@total_min - min) % MINUTES_IN_DAY
-    hours, minutes = min.divmod(MINUTES_IN_HOUR)
+    new_total = (total_min - min) % MINUTES_IN_DAY
+    hours, minutes = new_total.divmod(MINUTES_IN_HOUR)
     Clock.new(hours, minutes)
   end
 
