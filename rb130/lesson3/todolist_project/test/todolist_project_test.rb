@@ -6,6 +6,8 @@ Minitest::Reporters.use!
 
 require_relative '../lib/todolist_project'
 
+require 'date'
+
 class TodoListTest < Minitest::Test
   def setup
     @todo1 = Todo.new('Buy milk')
