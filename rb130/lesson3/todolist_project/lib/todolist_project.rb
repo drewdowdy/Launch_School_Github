@@ -2,6 +2,8 @@
 # data: name and description. There's also a "done"
 # flag to show whether this todo item is done.
 
+require 'bundler/setup'
+
 class Todo
   DONE_MARKER = 'X'
   UNDONE_MARKER = ' '
