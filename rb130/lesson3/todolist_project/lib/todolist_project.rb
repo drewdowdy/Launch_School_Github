@@ -3,6 +3,7 @@
 # flag to show whether this todo item is done.
 
 require 'bundler/setup'
+require 'stamp'
 
 class Todo
   DONE_MARKER = 'X'
