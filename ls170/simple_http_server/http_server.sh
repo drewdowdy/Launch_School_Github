@@ -1,18 +1,42 @@
-#!/bin/bash
+#!/usr/local/bin/bash
 
 function server() {
 while true
 do
+  message_arr=()
+  check=true
+
+  while $check
+  do
+    read line
+    message_arr+=($line)
+    if [[ "${#line}" -eq 1 ]]
+    then
+      check=false
+    fi
+  done
+
+  method=${message_arr[0]}
+  path=${message_arr[1]}
+
   read method path version
   if [[ $method = 'GET' ]]
   then
-    echo 'HTTP/1.1 200 OK'
+    if [[ -f "./www/$path" ]]
+    then
+      echo -ne 'HTTP/1.1 200 OK\r\n\r\n';cat "./www/$path"
+    else
+      echo -ne 'HTTP/1.1 404 Not Found\r\n\r\n'
+    fi
   else
-    echo 'HTTP1.1 400 Bad request'
+    echo 'HTTP1.1 400 Bad request';echo\r\n\r\n
   fi
 done
 }
 
 coproc SERVER_PROCESS { server; }
 
-netcat -lv 2345 <&${SERVER_PROCESS[0]} >&${SERVER_PROCESS[1]}
+while true
+do
+nc -lvp 2345 <&${SERVER_PROCESS[0]} >&${SERVER_PROCESS[1]}
+done
