@@ -38,5 +38,5 @@ coproc SERVER_PROCESS { server; }
 
 while true
 do
-nc -lvp 2345 <&${SERVER_PROCESS[0]} >&${SERVER_PROCESS[1]}
+netcat -lvp 2345 <&${SERVER_PROCESS[0]} >&${SERVER_PROCESS[1]}
 done
