@@ -1,3 +1,5 @@
+# run with `rackup config.ru`
+
 require_relative "myapp"
 
 use Wave

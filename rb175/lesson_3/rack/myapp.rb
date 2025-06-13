@@ -23,5 +23,3 @@ class FriendlyGreeting
     ]
   end
 end
-
-Rackup::Handler::WEBrick.run FriendlyGreeting.new(MyApp.new)
