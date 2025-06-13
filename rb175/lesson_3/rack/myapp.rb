@@ -23,3 +23,18 @@ class FriendlyGreeting
     ]
   end
 end
+
+class Wave
+  def initialize(app)
+    @app = app
+  end
+  def call(env)
+    body = @app.call(env).last
+   
+    [
+     '200', 
+     { "Content-Type" => "text/plain" }, 
+     body.prepend("Wave from afar!\n")
+    ]
+  end 
+end
