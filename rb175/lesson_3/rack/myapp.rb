@@ -2,7 +2,9 @@ require 'rackup'
 
 class MyApp
   def call(env)
-    ['200', { "Content-Type" => "text/plain" }, ["hello world"]]
+    body = "<h2>Hello in Style!</h2>"
+
+    ['200', { "Content-Type" => "text/html" }, body]
   end
 end
 
