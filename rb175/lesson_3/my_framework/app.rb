@@ -1,7 +1,7 @@
 require_relative 'advice'
 require 'erb'
 
-class HelloWorld
+class App
   def call(env)
     case env['REQUEST_PATH']
     when '/'
