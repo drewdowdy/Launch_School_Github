@@ -4,7 +4,7 @@ class MyApp
   def call(env)
     body = "<h2>Hello in Style!</h2>"
 
-    ['200', { "Content-Type" => "text/html" }, body]
+    [200, {"content-type" => "text/html"}, [body]]
   end
 end
 
@@ -17,8 +17,8 @@ class FriendlyGreeting
     body = @app.call(env).last
 
     [
-      '200',
-      {"Content-Type" => "text/html"},
+      200,
+      {"content-type" => "text/html"},
       body.prepend("<p>A warm welcome to you!</p>\n")
     ]
   end
@@ -32,9 +32,9 @@ class Wave
     body = @app.call(env).last
    
     [
-     '200', 
-     { "Content-Type" => "text/plain" }, 
-     body.prepend("Wave from afar!\n")
+     200, 
+     { "content-type" => "text/html" }, 
+     body.prepend("<p>Wave from afar!</p>\n")
     ]
   end 
 end
