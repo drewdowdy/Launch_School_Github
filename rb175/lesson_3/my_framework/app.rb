@@ -1,31 +1,28 @@
 require_relative 'advice'
-require 'erb'
 
 class App
   def call(env)
     case env['REQUEST_PATH']
     when '/'
-      [
-        200,
-        {"Content-Type" => 'text/html'},
-        [erb(:index)]
-      ]
+      [200, {"Content-Type" => 'text/html'}, [erb(:index)]]
     when '/advice'
       piece_of_advice = Advice.new.generate
       [
         200,
         {"Content-Type" => 'text/html'},
-        ["<html><body><b><em>#{piece_of_advice}</em></b></body></html>"]
+        [erb(:advice, message: piece_of_advice)]
       ]
     else
       [
         404,
-        {"Content-Type" => 'text/html', "Content-Length" => '48'},
-        ["<html><body><h4>404 Not Found</h4></body></html>"]
+        {"Content-Type" => 'text/html', "Content-Length" => '61'},
+        [erb(:not_found)]
       ]
     end
   end
 
+  private
+  
   def erb(filename, local = {})
     b = binding
     message = local[:message]
