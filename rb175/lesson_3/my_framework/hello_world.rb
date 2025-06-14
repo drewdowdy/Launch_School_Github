@@ -1,9 +1,12 @@
 require_relative 'advice'
+require 'erb'
 
 class HelloWorld
   def call(env)
     case env['REQUEST_PATH']
     when '/'
+      template = File.read('views/index.erb')
+      content = ERB.new(template)
       [
         200,
         {"Content-Type" => 'text/html'},
