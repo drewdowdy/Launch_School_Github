@@ -8,13 +8,9 @@
   
     
     <body>
-        <h1>Files in "public"</h1>
-        <ul>
-            <% @docs.each do |doc| %>
-              <li>
-                <a href="<%= doc%>"><%= doc%></a>
-              </li>
-            <% end %> 
-        </ul>
+        <h1><%= @title%></h1>
+        <% @content.each do |line| %>
+            <p><%= line %></p>
+        <% end %>
     </body>
 </html>
