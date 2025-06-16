@@ -7,6 +7,8 @@ get '/' do
     File.basename(doc, '.txt')
   end
 
+  @docs.reverse! if params[:sort] == 'desc'
+
   erb :home
 end
 
