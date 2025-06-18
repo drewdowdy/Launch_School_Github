@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= @title %></title>
+    <title><%= @title.capitalize %></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
 
   <body>
     <%= yield %>
-    <p>There are currently <%= @all_names.size %> users with a total of <%= count_interests(@user_hsh) %> interests.</p>
+    <p>There are currently <%= @user_names.size %> users with a total of <%= count_interests(@user_hsh) %> interests.</p>
   </body>
 </html>
