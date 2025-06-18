@@ -8,6 +8,6 @@
 
   <body>
     <%= yield %>
-    <p>There are currently <%= @all_names.size %> users with a total of <%= @total_interests %> interests.</p>
+    <p>There are currently <%= @all_names.size %> users with a total of <%= count_interests(@user_hsh) %> interests.</p>
   </body>
 </html>

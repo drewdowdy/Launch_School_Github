@@ -15,14 +15,17 @@ require "sinatra"
 require "sinatra/reloader"
 require "yaml"
 
-def count_interests(user_hsh)
-  user_hsh.values.sum { |data| data[:interests].size }
+helpers do 
+
+  def count_interests(user_hsh)
+    user_hsh.values.sum { |data| data[:interests].size }
+  end
+
 end
 
 before do
   @user_hsh = YAML.load_file("public/users.yaml")
   @all_names = @user_hsh.keys.map(&:to_s)
-  @total_interests = count_interests(@user_hsh)
 end
 
 get '/' do 
