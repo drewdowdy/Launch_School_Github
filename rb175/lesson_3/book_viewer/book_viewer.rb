@@ -1,4 +1,4 @@
-# require 'tilt/erubi' <-- can't include with heroku?
+require 'tilt/erubi' #<-- can't include with heroku?
 require "sinatra"
 require "sinatra/reloader" if development?
 
