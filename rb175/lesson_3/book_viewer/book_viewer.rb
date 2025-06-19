@@ -1,6 +1,6 @@
-require 'tilt/erubi'
+# require 'tilt/erubi' <-- can't include with heroku?
 require "sinatra"
-require "sinatra/reloader"
+require "sinatra/reloader" if development?
 
 # `before` is used to pre-load any content that will be globally used by the app
 before do
