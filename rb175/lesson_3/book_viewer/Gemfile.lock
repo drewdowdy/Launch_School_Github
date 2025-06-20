@@ -37,6 +37,7 @@ GEM
 
 PLATFORMS
   arm64-darwin-22
+  linux
   ruby
   x86_64-linux
 
