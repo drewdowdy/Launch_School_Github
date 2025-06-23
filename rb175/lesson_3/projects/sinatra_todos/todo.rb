@@ -45,7 +45,9 @@ end
 # Create a new list
 post "/lists" do
   list_name = params[:list_name].strip
-  if error = error_for_list_name(list_name)
+  error = error_for_list_name(list_name)
+  
+  if error
     session[:error] = error
     erb :new_list, layout: :layout
   else
