@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'sinatra/reloader'
+require 'sinatra/content_for'
 require 'tilt/erubi'
 
 configure do
@@ -54,5 +55,35 @@ post '/lists' do
     session[:lists] << { name: list_name, todos: [] }
     session[:success] = 'The list has been created.'
     redirect '/lists'
+  end
+end
+
+get '/lists/:id' do
+  id = params[:id].to_i
+  @list = session[:lists][id]
+  erb :list, layout: :layout
+end
+
+#Edit an existing todo list
+get '/lists/:id/edit' do
+  id = params[:id].to_i
+  @list = session[:lists][id]
+  erb :edit_list, layout: :layout
+end
+
+# Update an existing todo list
+post '/lists/:id' do
+  list_name = params[:list_name].strip
+  error = error_for_list_name(list_name)
+  id = params[:id].to_i
+  @list = session[:lists][id]
+
+  if error
+    session[:error] = error
+    erb :edit_list, layout: :layout
+  else
+    @list[:name] = list_name
+    session[:success] = 'The list has been updated.'
+    redirect "/lists/#{id}"
   end
 end
