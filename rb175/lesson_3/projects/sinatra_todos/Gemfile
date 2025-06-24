@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem 'erubi'
 gem 'sinatra'
 gem 'sinatra-contrib'
-gem 'webrick'
+# gem 'webrick'
 
 ruby '3.2.2'
 
