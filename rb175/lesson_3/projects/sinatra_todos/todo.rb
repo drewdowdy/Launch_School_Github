@@ -8,6 +8,24 @@ configure do
   set :session_secret, SecureRandom.hex(32)
 end
 
+helpers do
+  def list_complete?(list)
+    todos_count(list) > 0 && todos_remaining_count(list) == 0
+  end
+
+  def list_class(list)
+    'complete' if list_complete?(list)
+  end
+
+  def todos_count(list)
+    list[:todos].size
+  end
+
+  def todos_remaining_count(list)
+    list[:todos].select{ |todo| !todo[:completed] }.size
+  end
+end
+
 before do
   session[:lists] ||= []
 end
@@ -143,5 +161,18 @@ post '/lists/:list_id/todos/:id' do
 
   @list[:todos][todo_id][:completed] = is_completed
   session[:success] = 'The todo has been updated.'
+  redirect "/lists/#{@list_id}"
+end
+
+# Mark all todos as complete
+post '/lists/:id/complete_all' do
+  @list_id = params[:id].to_i
+  @list = session[:lists][@list_id]
+
+  @list[:todos].each do |todo|
+    todo[:completed] = true
+  end
+
+  session[:success] = 'All todos have been completed.'
   redirect "/lists/#{@list_id}"
 end
