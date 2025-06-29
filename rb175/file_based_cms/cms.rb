@@ -10,5 +10,5 @@ configure do
 end
 
 get '/' do
-  
+  erb :layout
 end
