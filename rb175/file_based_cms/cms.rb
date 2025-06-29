@@ -9,6 +9,12 @@ configure do
   set :erb, :escape_html => true
 end
 
+before do
+  @files = Dir.glob('data/*').map do |file|
+    File.basename(file)
+  end
+end
+
 get '/' do
-  erb :layout
+  erb :index
 end
