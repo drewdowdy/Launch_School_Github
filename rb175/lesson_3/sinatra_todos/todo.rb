@@ -150,6 +150,7 @@ post "/lists/:id/destroy" do
     redirect "/lists"
   end
 end
+
 # Add a new todo to a list
 post '/lists/:list_id/todos' do
   @list_id = params[:list_id].to_i
