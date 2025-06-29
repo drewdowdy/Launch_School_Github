@@ -9,7 +9,7 @@ configure do
   set :erb, :escape_html => true
 end
 
-root = File.expand_path("..", __FILE__)
+root = File.expand_path('..', __FILE__)
 
 get '/' do
   @files = Dir.glob(root + '/data/*').map! do |path|

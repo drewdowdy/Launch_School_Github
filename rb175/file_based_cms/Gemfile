@@ -1,10 +1,12 @@
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
-ruby "3.2.2"
+ruby '3.2.2'
 
-gem "sinatra"
-gem "sinatra-contrib"
-gem "erubi"
+gem 'sinatra'
+gem 'sinatra-contrib'
+gem 'erubi'
+gem 'minitest'
+gem 'rack-test'
 
-gem "rackup", "~> 2.2"
-gem "puma", "~> 6.6"
+gem 'rackup', '~> 2.2'
+gem 'puma', '~> 6.6'
