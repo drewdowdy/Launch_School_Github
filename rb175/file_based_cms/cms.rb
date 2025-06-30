@@ -2,6 +2,7 @@ require 'sinatra'
 require 'sinatra/reloader' if development?
 require 'sinatra/content_for'
 require 'tilt/erubi'
+require 'redcarpet'
 
 configure do
   enable :sessions
@@ -17,8 +18,25 @@ before do
 end
 
 helpers do
-  def render_markdown(html)
+  def no_file_error(path)
+    "#{File.basename(path)} does not exist." if !File.file?(path)
+  end
+
+  def render_markdown(text)
+    markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
+    markdown.render(text)
+  end
+
+  def load_file_content(path)
+    content = File.read(path)
     
+    case File.extname(path) # gets extension name of file
+    when '.txt'
+      headers['Content-Type'] = 'text/plain'
+      content
+    when '.md'
+      render_markdown(content)
+    end
   end
 end
 
@@ -26,20 +44,14 @@ get '/' do
   erb :index
 end
 
-def error_for_file_name(file_name)
-  "#{file_name} does not exist." if !@files.include?(file_name) 
-end
-
 get '/:file_name' do
   file_name = params[:file_name]
-  error = error_for_file_name(file_name)
+  file_path = @root + '/data/' + file_name
 
-  if error
-    session[:error] = error
-    redirect '/'
+  if File.exist?(file_path)
+    load_file_content(file_path)
   else
-    file_path = Dir.glob(@root + '/data/' + file_name).first
-    headers['Content-Type'] = 'text/plain'
-    File.read(file_path)
+    session[:error] = "#{file_name} does not exist."
+    redirect '/'
   end
 end
