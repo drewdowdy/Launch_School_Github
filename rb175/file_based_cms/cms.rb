@@ -9,7 +9,7 @@ configure do
   set :session_secret, SecureRandom.hex(32)
 end
 
-# Methods
+# Global Methods
 def no_file_error(path)
   "#{File.basename(path)} does not exist." if !File.file?(path)
 end
@@ -57,7 +57,7 @@ get '/:file_name' do
   if File.exist?(file_path)
     load_file_content(file_path)
   else
-    session[:error] = "#{file_name} does not exist."
+    session[:message] = "#{file_name} does not exist."
     redirect '/'
   end
 end
@@ -76,6 +76,6 @@ post '/:file_name' do
 
   File.write(file_path, user_input)
 
-  session[:success] = "#{file_name} has been updated"
+  session[:message] = "#{file_name} has been updated"
   redirect '/'
 end

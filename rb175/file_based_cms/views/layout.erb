@@ -3,9 +3,16 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheets" href="cms.css">
+    <link rel="stylesheet" href="/stylesheets/cms.css">
   </head>
   <body>
+    
+    <% if session[:message] %>
+      <div class="flash message">
+        <p><%= session.delete(:message) %></p>
+      </div>
+    <% end %>
+
     <main>
       <%= yield %>
     </main>
