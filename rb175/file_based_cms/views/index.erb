@@ -21,8 +21,11 @@
 
       <ul>
         <% @files.each do |file| %>
-          <li><a href="/<%= file %>"><%= file %></a></li>
-          <a href="/<%= file %>/edit"><button>Edit</button></a>
+          <li>
+            <a href="/<%= file %>"><%= file %></a>
+            <a href="/<%= file %>/edit"><button>Edit</button></a>
+            <br><br>
+          </li>
         <% end %>
       </ul>
     </main>
