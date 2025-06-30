@@ -16,6 +16,12 @@ before do
   end
 end
 
+helpers do
+  def render_markdown(html)
+    
+  end
+end
+
 get '/' do
   erb :index
 end
