@@ -1,33 +1,21 @@
-<!doctype html>
-<html lang="en-US">
-  <head>
-    <title>Index</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  </head>
-  <body>
-    <main>
-      <% if session[:error] %>
-        <div class="flash error">
-          <p><%= session.delete(:error) %></p>
-        </div>
-      <% end %>
+<% if session[:error] %>
+  <div class="flash error">
+    <p><%= session.delete(:error) %></p>
+  </div>
+<% end %>
 
-      <% if session[:success] %>
-        <div class="flash success">
-          <p><%= session.delete(:success) %></p>
-        </div>
-      <% end %>
+<% if session[:success] %>
+  <div class="flash success">
+    <p><%= session.delete(:success) %></p>
+  </div>
+<% end %>
 
-      <ul>
-        <% @files.each do |file| %>
-          <li>
-            <a href="/<%= file %>"><%= file %></a>
-            <a href="/<%= file %>/edit"><button>Edit</button></a>
-            <br><br>
-          </li>
-        <% end %>
-      </ul>
-    </main>
-  </body>
-</html>
+<ul>
+  <% @files.each do |file| %>
+    <li>
+      <a href="/<%= file %>"><%= file %></a>
+      <a href="/<%= file %>/edit"><button>Edit</button></a>
+      <br><br>
+    </li>
+  <% end %>
+</ul>

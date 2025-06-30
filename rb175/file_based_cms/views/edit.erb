@@ -1,16 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>Edit</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  </head>
-  <body>
-    Edit contents of <%= @file_name %>:
-    <form action="/<%= @file_name %>" method="post">
-    <textarea name="content" rows=15 cols=50 placeholder="Document can be edited now!"></textarea>
-    <br>
-    <button type="submit" value="">Save changes</button>
-    </form>
-  </body>
-</html>
+Edit contents of <%= @file_name %>:
+<form action="/<%= @file_name %>" method="post">
+<textarea name="content" rows=15 cols=50 placeholder="Document can be edited now!"></textarea>
+<br>
+<button type="submit" value="">Save changes</button>
+</form>
