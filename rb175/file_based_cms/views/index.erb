@@ -1,7 +1,9 @@
 <!doctype html>
 <html lang="en-US">
   <head>
+    <title>Index</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
   <body>
     <main>
@@ -11,10 +13,16 @@
         </div>
       <% end %>
 
+      <% if session[:success] %>
+        <div class="flash success">
+          <p><%= session.delete(:success) %></p>
+        </div>
+      <% end %>
+
       <ul>
         <% @files.each do |file| %>
           <li><a href="/<%= file %>"><%= file %></a></li>
-          <input type="button" value="Edit">
+          <a href="/<%= file %>/edit"><button>Edit</button></a>
         <% end %>
       </ul>
     </main>

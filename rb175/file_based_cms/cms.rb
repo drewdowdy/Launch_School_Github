@@ -40,10 +40,12 @@ helpers do
   end
 end
 
+# Shows a list of all files
 get '/' do
   erb :index
 end
 
+# Shows the contents of a file
 get '/:file_name' do
   file_name = params[:file_name]
   file_path = @root + '/data/' + file_name
@@ -54,4 +56,22 @@ get '/:file_name' do
     session[:error] = "#{file_name} does not exist."
     redirect '/'
   end
+end
+
+# Shows the edit page
+get '/:file_name/edit' do
+  @file_name = params[:file_name]
+  erb :edit
+end
+
+# Updates the file
+post '/:file_name' do
+  file_name = params[:file_name]
+  file_path = @root + '/data/' + file_name
+  user_input = params[:content]
+
+  File.write(file_path, user_input)
+
+  session[:success] = "#{file_name} has been updated"
+  redirect '/'
 end
