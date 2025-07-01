@@ -54,6 +54,7 @@ get '/new' do
   erb :new
 end
 
+# Creates the new document in the data folder
 post '/create' do
   new_file_name = params[:file_name]
 
@@ -88,7 +89,7 @@ get '/:file_name/edit' do
   erb :edit
 end
 
-# Updates the file
+# Updates the content of a file
 post '/:file_name' do
   file_name = params[:file_name]
   file_path = File.join(data_path, file_name)
@@ -96,6 +97,42 @@ post '/:file_name' do
 
   File.write(file_path, user_input)
 
-  session[:message] = "#{file_name} has been updated"
+  session[:message] = "#{file_name} has been updated."
+  redirect '/'
+end
+
+# Deletes a file from the folder
+post '/:file_name/delete' do
+  file_name = params[:file_name]
+  file_path = File.join(data_path, file_name)
+  
+  File.delete(file_path)
+
+  session[:message] = "#{file_name} has been deleted."
+  redirect '/'
+end
+
+# Shows the signin page
+get '/users/signin' do
+  erb :signin
+end
+
+# Analyzes the user's signin credentials
+post '/users/signin' do
+  if params[:username] == 'admin' && params[:password] == 'secret'
+    session[:username] = params[:username]
+    session[:message] = 'Welcome!'
+    redirect '/'
+  else
+    session[:message] = 'Invalid credentials'
+    status 422
+    erb :signin
+  end
+end
+
+# Signs out the user
+post '/users/signout' do 
+  session.delete(:username)
+  session[:message] = 'You have been signed out.'
   redirect '/'
 end
