@@ -7,13 +7,11 @@
     <link rel="stylesheet" href="/stylesheets/cms.css">
   </head>
   <body>
-    
     <% if session[:message] %>
       <div class="flash message">
         <p><%= session.delete(:message) %></p>
       </div>
     <% end %>
-
     <main>
       <%= yield %>
     </main>

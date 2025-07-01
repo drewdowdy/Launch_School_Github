@@ -49,6 +49,26 @@ get '/' do
   erb :index
 end
 
+# Shows the new document page
+get '/new' do
+  erb :new
+end
+
+post '/create' do
+  new_file_name = params[:file_name]
+
+  if new_file_name.size.zero?
+    session[:message] = 'A name is required.'
+    erb :new
+  else
+    new_path = File.join(data_path, new_file_name)
+    File.write(new_path, '')
+    session[:message] = "#{new_file_name} was created."
+    redirect '/'
+  end
+
+end
+
 # Shows the contents of a file
 get '/:file_name' do
   file_name = params[:file_name]
