@@ -4,6 +4,7 @@ require 'sinatra/content_for'
 require 'tilt/erubi'
 require 'redcarpet'
 require 'yaml'
+require 'bcrypt'
 
 configure do
   enable :sessions
@@ -53,7 +54,19 @@ def load_user_credentials
   else
     File.expand_path("../users.yml", __FILE__)
   end
+
   YAML.load_file(credentials_path)
+end
+
+def valid_credentials?(username, password)
+  users = load_user_credentials
+
+  if users.key?(username)
+    bcrypt_password = BCrypt::Password.new(users[username]) # BCrypt::Password.new uses an EXISTING hash; #create makes a new one
+    bcrypt_password == password
+  else
+    false
+  end
 end
 
 # ~~~~~~~~~~~~~~~~~~~~
@@ -149,8 +162,10 @@ end
 # Analyzes the user's signin credentials
 post '/users/signin' do
   users = load_user_credentials
+  username = params[:username]
+  password = params[:password]
 
-  if users.key?(params[:username]) && users[params[:username]] == params[:password]
+  if valid_credentials?(username, password)
     session[:username] = params[:username]
     session[:message] = 'Welcome!'
     redirect '/'
