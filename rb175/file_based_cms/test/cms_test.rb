@@ -127,23 +127,23 @@ class CMSTest < Minitest::Test
   end
 
   def test_create_new_document
-    post "/create", {filename: "test.txt"}, admin_session
+    post "/create", {file_name: "test.txt"}, admin_session
     assert_equal 302, last_response.status
-    assert_equal "test.txt has been created.", session[:message]
+    assert_equal "test.txt was created.", session[:message]
 
     get "/"
     assert_includes last_response.body, "test.txt"
   end
 
   def test_create_new_document_signed_out
-    post "/create", {filename: "test.txt"}
+    post "/create", {file_name: "test.txt"}
 
     assert_equal 302, last_response.status
     assert_equal "You must be signed in to do that.", session[:message]
   end
 
   def test_create_new_document_without_filename
-    post "/create", {filename: ""}, admin_session
+    post "/create", {file_name: ""}, admin_session
     assert_equal 422, last_response.status
     assert_includes last_response.body, "A name is required"
   end

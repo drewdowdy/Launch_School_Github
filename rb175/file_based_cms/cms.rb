@@ -3,6 +3,7 @@ require 'sinatra/reloader' if development?
 require 'sinatra/content_for'
 require 'tilt/erubi'
 require 'redcarpet'
+require 'yaml'
 
 configure do
   enable :sessions
@@ -46,6 +47,17 @@ def require_user_sign_in
   end
 end
 
+def load_user_credentials
+  credentials_path = if ENV["RACK_ENV"] == "test"
+    File.expand_path("../test/users.yml", __FILE__)
+  else
+    File.expand_path("../users.yml", __FILE__)
+  end
+  YAML.load_file(credentials_path)
+end
+
+# ~~~~~~~~~~~~~~~~~~~~
+
 # Shows a list of all files
 get '/' do
   pattern = File.join(data_path, '*') # File.join will use the right seperator based on OS
@@ -58,6 +70,8 @@ end
 
 # Shows the new document page
 get '/new' do
+  require_user_sign_in
+
   erb :new
 end
 
@@ -65,10 +79,11 @@ end
 post '/create' do
   require_user_sign_in
 
-  new_file_name = params[:file_name]
+  new_file_name = params[:file_name] || ''
 
   if new_file_name.size.zero?
     session[:message] = 'A name is required.'
+    status 422
     erb :new
   else
     new_path = File.join(data_path, new_file_name)
@@ -76,7 +91,6 @@ post '/create' do
     session[:message] = "#{new_file_name} was created."
     redirect '/'
   end
-
 end
 
 # Shows the contents of a file
@@ -94,6 +108,8 @@ end
 
 # Shows the edit page
 get '/:file_name/edit' do
+  require_user_sign_in
+
   @file_name = params[:file_name]
   erb :edit
 end
@@ -132,7 +148,9 @@ end
 
 # Analyzes the user's signin credentials
 post '/users/signin' do
-  if params[:username] == 'admin' && params[:password] == 'secret'
+  users = load_user_credentials
+
+  if users.key?(params[:username]) && users[params[:username]] == params[:password]
     session[:username] = params[:username]
     session[:message] = 'Welcome!'
     redirect '/'
