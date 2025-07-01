@@ -39,6 +39,13 @@ def data_path
   end
 end
 
+def require_user_sign_in
+  if session[:username].nil?
+    session[:message] = 'You must be signed in to do that.'
+    redirect '/'
+  end
+end
+
 # Shows a list of all files
 get '/' do
   pattern = File.join(data_path, '*') # File.join will use the right seperator based on OS
@@ -56,6 +63,8 @@ end
 
 # Creates the new document in the data folder
 post '/create' do
+  require_user_sign_in
+
   new_file_name = params[:file_name]
 
   if new_file_name.size.zero?
@@ -91,6 +100,8 @@ end
 
 # Updates the content of a file
 post '/:file_name' do
+  require_user_sign_in
+
   file_name = params[:file_name]
   file_path = File.join(data_path, file_name)
   user_input = params[:content]
@@ -103,6 +114,8 @@ end
 
 # Deletes a file from the folder
 post '/:file_name/delete' do
+  require_user_sign_in
+
   file_name = params[:file_name]
   file_path = File.join(data_path, file_name)
   
