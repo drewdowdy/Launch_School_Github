@@ -8,6 +8,7 @@ gem 'erubi'           # templating engine for embedded ruby (erb)
 gem 'minitest'        # library of a complete suite of testing facilities
 gem 'rack-test'       # library for testing rack applications
 gem 'redcarpet'       # library for markdown processing
+gem 'bcrypt'          # module for password encryption
 
 gem 'rackup', '~> 2.2'
 gem 'puma', '~> 6.6'
