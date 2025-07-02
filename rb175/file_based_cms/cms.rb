@@ -73,6 +73,23 @@ def correct_extension?(file_name)
   file_name.include?('.txt') || file_name.include?('.md')
 end
 
+def generate_copy_name(file_name)
+  extension = File.extname(file_name)
+  base_name = File.basename(file_name, extension)
+
+  copy_name = "#{base_name}_copy#{extension}"
+  new_path = File.join(data_path, copy_name)
+  number = 2
+
+  while File.file?(new_path)
+    copy_name = "#{base_name}_copy_#{number}#{extension}"
+    new_path = File.join(data_path, copy_name)
+    number += 1
+  end
+
+  copy_name
+end
+
 # ~~~~~~~~~~~~~~~~~~~~
 
 # Shows a list of all files
@@ -112,6 +129,22 @@ post '/create' do
     session[:message] = "#{new_file_name} was created."
     redirect '/'
   end
+end
+
+# Duplicates an existing file
+post '/duplicate' do
+  require_user_sign_in
+
+  original_path = File.join(data_path, params[:existing_file_name])
+  original_content = File.read(original_path)
+
+  copy_name = generate_copy_name(params[:existing_file_name])
+  new_path = File.join(data_path, copy_name)
+
+  File.write(new_path, original_content)
+
+  session[:message] = "#{params[:existing_file_name]} has been duplicated."
+  redirect '/'
 end
 
 # Shows the contents of a file
