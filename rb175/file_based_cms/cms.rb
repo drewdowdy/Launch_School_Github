@@ -94,6 +94,8 @@ end
 
 # Shows a list of all files
 get '/' do
+  @title = 'Index'
+
   pattern = File.join(data_path, '*') # File.join will use the right seperator based on OS
   @files = Dir.glob(pattern).map! do |path|
     File.basename(path)
@@ -105,6 +107,8 @@ end
 # Shows the new document page
 get '/new' do
   require_user_sign_in
+
+  @title = 'New Document'
 
   erb :new
 end
@@ -164,6 +168,8 @@ end
 get '/:file_name/edit' do
   require_user_sign_in
 
+  @title = 'Edit File'
+
   @file_name = params[:file_name]
   erb :edit
 end
@@ -197,6 +203,7 @@ end
 
 # Shows the signin page
 get '/users/signin' do
+  @title = 'Sign In'
   erb :signin
 end
 
@@ -222,4 +229,8 @@ post '/users/signout' do
   session.delete(:username)
   session[:message] = 'You have been signed out.'
   redirect '/'
+end
+
+get '/users/signup' do
+  erb :signup
 end
