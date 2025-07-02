@@ -69,6 +69,10 @@ def valid_credentials?(username, password)
   end
 end
 
+def correct_extension?(file_name)
+  file_name.include?('.txt') || file_name.include?('.md')
+end
+
 # ~~~~~~~~~~~~~~~~~~~~
 
 # Shows a list of all files
@@ -98,6 +102,10 @@ post '/create' do
     session[:message] = 'A name is required.'
     status 422
     erb :new
+  elsif !correct_extension?(new_file_name)
+    session[:message] = 'File extensions must be .txt or .md.'
+    status 422
+    erb :new
   else
     new_path = File.join(data_path, new_file_name)
     File.write(new_path, '')
@@ -108,7 +116,7 @@ end
 
 # Shows the contents of a file
 get '/:file_name' do
-  file_name = params[:file_name]
+  file_name = File.basename(params[:file_name])
   file_path = File.join(data_path, file_name)
 
   if File.exist?(file_path)
