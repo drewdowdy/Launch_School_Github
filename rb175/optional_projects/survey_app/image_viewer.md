@@ -1,0 +1,1 @@
+![Alt text](/Users/drewdowdy/Launch_School_Github/rb175/file_based_cms/data/cute dog.jpeg)

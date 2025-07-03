@@ -110,6 +110,8 @@ end
 
 # Shows the upload image page
 get '/new_image' do
+  require_user_sign_in
+
   @title = 'Upload an Image'
   erb :new_image
 end
@@ -189,7 +191,12 @@ get '/:file_name' do
   file_path = File.join(data_path, file_name)
 
   if File.exist?(file_path)
-    load_file_content(file_path)
+    if File.extname(file_name) == '.jpeg'
+      content_type 'image/jpeg'
+      File.read(file_path)
+    else
+      load_file_content(file_path)
+    end
   else
     session[:message] = "#{file_name} does not exist."
     redirect '/'
