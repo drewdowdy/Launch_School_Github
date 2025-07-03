@@ -108,6 +108,34 @@ get '/' do
   erb :index
 end
 
+# Shows the upload image page
+get '/new_image' do
+  @title = 'Upload an Image'
+  erb :new_image
+end
+
+# Saves the image in the data folder
+post '/new_image' do
+  if params[:image_upload] && params[:image_upload][:tempfile]
+    uploaded_image = params[:image_upload]
+    image_name = uploaded_image[:filename]
+    image_data = uploaded_image[:tempfile]
+
+    file_path = File.join(data_path, image_name)
+
+    File.open(file_path, 'wb') do |file|  # wb - 'write binary' binary mode
+      file.write(image_data.read)
+    end
+
+    session[:message] = 'Image was successfully uploaded.'
+    redirect '/'
+  else
+    session[:message] = 'No image was uploaded.'
+    status 422
+    erb :new_image
+  end
+end
+
 # Shows the new document page
 get '/new' do
   require_user_sign_in
