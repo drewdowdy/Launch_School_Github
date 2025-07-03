@@ -189,9 +189,10 @@ end
 get '/:file_name' do
   file_name = File.basename(params[:file_name])
   file_path = File.join(data_path, file_name)
+  file_extension = File.extname(file_name)
 
   if File.exist?(file_path)
-    if ['.jpeg', '.jpg'].include?(File.extname(file_name))
+    if ['.jpeg', '.jpg'].include?(file_extension)
       content_type 'image/jpeg'
       File.read(file_path)
     else
@@ -208,8 +209,8 @@ get '/:file_name/edit' do
   require_user_sign_in
 
   @title = 'Edit File'
-
   @file_name = params[:file_name]
+
   erb :edit
 end
 
@@ -243,6 +244,7 @@ end
 # Shows the signin page
 get '/users/signin' do
   @title = 'Sign In'
+
   erb :signin
 end
 
@@ -273,6 +275,7 @@ end
 # Shows the signup page
 get '/users/signup' do
   @title = 'Sign Up'
+  
   erb :signup
 end
 
