@@ -191,7 +191,7 @@ get '/:file_name' do
   file_path = File.join(data_path, file_name)
 
   if File.exist?(file_path)
-    if File.extname(file_name) == '.jpeg'
+    if ['.jpeg', '.jpg'].include?(File.extname(file_name))
       content_type 'image/jpeg'
       File.read(file_path)
     else
