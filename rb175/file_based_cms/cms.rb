@@ -69,6 +69,10 @@ def valid_credentials?(username, password)
   end
 end
 
+def hash_password(password)
+  BCrypt::Password.create(password).to_s
+end
+
 def correct_extension?(file_name)
   file_name.include?('.txt') || file_name.include?('.md')
 end
@@ -231,6 +235,28 @@ post '/users/signout' do
   redirect '/'
 end
 
+# Shows the signup page
 get '/users/signup' do
+  @title = 'Sign Up'
   erb :signup
+end
+
+# Analyzes the user's sign up information
+post '/users/signup' do
+  users = load_user_credentials
+
+  if users.key?(params[:username])
+    session[:message] = 'Username is already taken. Choose a new one.'
+    status 422
+    erb :signup
+  else
+    username = params[:username]
+    users[username] = hash_password(params[:password])
+    credentials_path = File.expand_path("../users.yml", __FILE__)
+
+    File.write(credentials_path, users.to_yaml)
+
+    session[:message] = 'You have successfully signed up.'
+    redirect '/'
+  end
 end
