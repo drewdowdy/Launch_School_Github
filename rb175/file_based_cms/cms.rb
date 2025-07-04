@@ -43,9 +43,9 @@ end
 
 def version_path
   if ENV["RACK_ENV"] == "test"
-    File.expand_path("../test/version", __FILE__)
+    File.expand_path("../test/versions", __FILE__)
   else
-    File.expand_path("../version", __FILE__)
+    File.expand_path("../versions", __FILE__)
   end
 end
 
@@ -248,12 +248,12 @@ post '/:file_name' do
   original_content = File.read(file_path)
   
   version_name = generate_version_name(file_name)
-  version_path = File.join(version_path, version_name) # TypeError at /changes.txt
-                                                       # no implicit conversion of nil into String
+  full_version_path = File.join(version_path, version_name)
+
   new_content = params[:content]
 
-  File.write(version_name, original_content) # save a record of original content
-  File.write(file_path, new_content)         # update the content of file
+  File.write(full_version_path, original_content) # save a record of original content
+  File.write(file_path, new_content)              # update the content of file
 
   session[:message] = "#{file_name} has been updated."
   redirect '/'
