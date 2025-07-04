@@ -41,6 +41,14 @@ def data_path
   end
 end
 
+def version_path
+  if ENV["RACK_ENV"] == "test"
+    File.expand_path("../test/version", __FILE__)
+  else
+    File.expand_path("../version", __FILE__)
+  end
+end
+
 def require_user_sign_in
   if session[:username].nil?
     session[:message] = 'You must be signed in to do that.'
@@ -92,6 +100,23 @@ def generate_copy_name(file_name)
   end
 
   copy_name
+end
+
+def generate_version_name(file_name)
+  extension = File.extname(file_name)
+  base_name = File.basename(file_name, extension)
+
+  version_name = "#{base_name}_version_1#{extension}"
+  new_path = File.join(version_path, version_name)
+  number = 2
+
+  while File.file?(new_path)
+    version_name = "#{base_name}_version_#{number}#{extension}"
+    new_path = File.join(version_path, version_name)
+    number += 1
+  end
+
+  version_name
 end
 
 # ~~~~~~~~~~~~~~~~~~~~
@@ -220,9 +245,15 @@ post '/:file_name' do
 
   file_name = params[:file_name]
   file_path = File.join(data_path, file_name)
-  user_input = params[:content]
+  original_content = File.read(file_path)
+  
+  version_name = generate_version_name(file_name)
+  version_path = File.join(version_path, version_name) # TypeError at /changes.txt
+                                                       # no implicit conversion of nil into String
+  new_content = params[:content]
 
-  File.write(file_path, user_input)
+  File.write(version_name, original_content) # save a record of original content
+  File.write(file_path, new_content)         # update the content of file
 
   session[:message] = "#{file_name} has been updated."
   redirect '/'
@@ -275,7 +306,7 @@ end
 # Shows the signup page
 get '/users/signup' do
   @title = 'Sign Up'
-  
+
   erb :signup
 end
 
