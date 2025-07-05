@@ -15,10 +15,12 @@ class CMSTest < Minitest::Test
 
   def setup
     FileUtils.mkdir_p(data_path)
+    FileUtils.mkdir_p(version_path)
   end
 
   def teardown
     FileUtils.rm_rf(data_path)
+    FileUtils.rm_rf(version_path)
   end
 
   def create_document(name, content = "")
@@ -94,6 +96,8 @@ class CMSTest < Minitest::Test
   end
 
   def test_updating_document
+    create_document "changes.txt", "original content"
+
     post "/changes.txt", {content: "new content"}, admin_session
 
     assert_equal 302, last_response.status
@@ -203,4 +207,24 @@ class CMSTest < Minitest::Test
     assert_nil session[:username]
     assert_includes last_response.body, "Sign In"
   end
+
+  # Validate that document names contain an extension that the application supports.
+  def test_extension_name
+    post "/create", {file_name: "test.txt"}, admin_session
+    assert_equal 302, last_response.status
+    assert_equal "test.txt was created.", session[:message]
+
+    post "/create", {file_name: "test.md"}, admin_session
+    assert_equal 302, last_response.status
+    assert_equal "test.md was created.", session[:message]
+    
+    post "/create", {file_name: "test"}, admin_session
+    assert_equal 422, last_response.status
+    assert_equal "File extensions must be .txt or .md.", session[:message]
+  end
+
+  # Add a "duplicate" button that creates a new document based on an old one.
+  # Extend this project with a user signup form.
+  # Add the ability to upload images to the CMS (which could be referenced within markdown files).
+  # Modify the CMS so that each version of a document is preserved as changes are made to it.
 end
