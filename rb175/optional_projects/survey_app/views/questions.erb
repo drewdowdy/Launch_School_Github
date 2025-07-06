@@ -1,0 +1,13 @@
+<form action="/questions" method="post">
+  <ol>
+    <% @survey_questions.each do |question_num, question_hsh| %>
+      <li><%= question_hsh[:question] %></li>
+      <% question_hsh[:choices].each_with_index do |choice, index| %>
+        <input type="radio" name="<%= question_num %>" value="<%= choice %>" id="<%= question_num %>_<%= index %>">
+        <label for="<%= question_num %>_<%= index %>"><%= choice %></label>
+      <% end %>
+    <% end %>
+  </ol>
+  
+  <button type="submit">Submit</button>
+</form>

@@ -33,6 +33,23 @@ Store answers as a hash
 So to get a user's answer, it would be something like
 answers[id][question_1] == answer1 (for user w/ id)
 
+Question storage:
+
+{
+  1: {
+    question: 'Do you like ice cream?',
+    choices: ['Yes', 'No']
+  },
+  2: {
+    question: 'How much do you like chocolate? 1 = not at all; 5 = so so much',
+    choices: (1..5).to_a
+  },
+  3: {
+    question: 'Would you put sprinkles on your ice cream?',
+    choices: ['Sure', 'Maybe', 'No', "I don't know"]
+  }
+}
+
 === Brainstorm ===
 
 Initial thoughts:
@@ -50,7 +67,7 @@ The homepage should be a welcome page where you can either login or begin the su
 require 'yaml'
 
 require 'sinatra'
-require 'sinatra/reloader'
+require 'sinatra/reloader' if development?
 require 'tilt/erubi'
 require 'redcarpet'
 require 'bcrypt'
@@ -68,8 +85,34 @@ def data_path
   end
 end
 
+def load_survey_questions
+  questions_path = if ENV["RACK_ENV"] == "test"
+    File.expand_path("../test/data/questions.yml", __FILE__)
+  else
+    File.expand_path("../data/questions.yml", __FILE__)
+  end
+
+  YAML.load_file(questions_path)
+end
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Show the home page
 get '/' do
   erb :home
 end
 
+# Show the list of survey questions
+get '/questions' do
+  @title = 'Survey'
+  @survey_questions = load_survey_questions
+  erb :questions
+end
 
+# Saves the user's answers from the survey
+post '/questions' do
+ session[:message] = 'Thank you for completing the survey!'
+ redirect '/'
+
+  
+end

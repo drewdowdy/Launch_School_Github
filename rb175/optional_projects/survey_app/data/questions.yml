@@ -1,0 +1,21 @@
+---
+1:
+  :question: 'Do you like ice cream?'
+  :choices:
+    - 'Yes'
+    - 'No'
+2:
+  :question: 'How much do you like chocolate? 1 = not at all; 5 = so so much'
+  :choices:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+3:
+  :question: 'Would you put sprinkles on your ice cream?'
+  :choices:
+    - 'Sure'
+    - 'Maybe'
+    - 'No'
+    - "I don't know"
