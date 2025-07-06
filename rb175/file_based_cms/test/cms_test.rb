@@ -226,7 +226,17 @@ class CMSTest < Minitest::Test
 
   # Add a "duplicate" button that creates a new document based on an old one.
   def test_dupliate_button
+    create_document "test.txt", "This is some text."
+    post "/duplicate", {existing_file_name: "test.txt"}, admin_session
     
+    assert_equal "test.txt has been duplicated.", session[:message]
+    assert_equal true, File.exist?(File.join(data_path, "test_copy.txt"))
+
+    post "/duplicate", {existing_file_name: "test.txt"}
+    assert_equal true, File.exist?(File.join(data_path, "test_copy_2.txt"))
+
+    assert_includes File.join(data_path, "test_copy.txt"), "This is some text."
+    assert_includes File.join(data_path, "test_copy_2.txt"), "This is some text."
   end
 
   # Extend this project with a user signup form.
