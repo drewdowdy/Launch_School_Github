@@ -77,11 +77,11 @@ configure do
   set :session_secret, SecureRandom.hex(32)
 end
 
-def data_path
+def path(folder)
   if ENV["RACK_ENV"] == "test"
-    File.expand_path("../test/data", __FILE__)
+    File.expand_path("../test/#{folder}", __FILE__)
   else
-    File.expand_path("../data", __FILE__)
+    File.expand_path("../#{folder}", __FILE__)
   end
 end
 
@@ -93,6 +93,10 @@ def load_survey_questions
   end
 
   YAML.load_file(questions_path)
+end
+
+def generate_user_id(file_name)
+  users = File.join(path('survey_data'))
 end
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -111,8 +115,8 @@ end
 
 # Saves the user's answers from the survey
 post '/questions' do
- session[:message] = 'Thank you for completing the survey!'
- redirect '/'
+  user_id = generate_user_id
 
-  
+  session[:message] = 'Thank you for completing the survey!'
+  redirect '/'
 end

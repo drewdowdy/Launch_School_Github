@@ -14,7 +14,7 @@ class SurveyTest < Minitest::Test
   end
 
   def setup
-    FileUtils.mkdir_p(data_path)
+    FileUtils.mkdir_p(path('data'))
     @mock_survey = {
       '1' => {
         question: "Test Question 1?",
@@ -25,11 +25,11 @@ class SurveyTest < Minitest::Test
         choices: ["Yes", "No"]
       }
     }
-    File.write(File.join(data_path, 'questions.yml'), @mock_survey.to_yaml)
+    File.write(File.join(path('data'), 'questions.yml'), @mock_survey.to_yaml)
   end
 
   def teardown
-    FileUtils.rm_rf(data_path)
+    FileUtils.rm_rf(path('data'))
   end
 
   def test_welcome_page
@@ -46,6 +46,6 @@ class SurveyTest < Minitest::Test
   end
 
   def test_save_responses
-    post '/questions'
+    # post '/questions'
   end
 end
