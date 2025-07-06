@@ -219,12 +219,16 @@ class CMSTest < Minitest::Test
     assert_equal "test.md was created.", session[:message]
     
     post "/new_doc", {file_name: "test"}, admin_session
-    puts "DEBUG: Session message: #{session[:message]}"
     assert_equal 422, last_response.status
-    assert_equal "File extensions must be .txt or .md.", session[:message]
+    # assert_equal "File extensions must be .txt or .md.", session[:message]
+    assert_includes last_response.body, "File extensions must be .txt or .md."
   end
 
   # Add a "duplicate" button that creates a new document based on an old one.
+  def test_dupliate_button
+    
+  end
+
   # Extend this project with a user signup form.
   # Add the ability to upload images to the CMS (which could be referenced within markdown files).
   # Modify the CMS so that each version of a document is preserved as changes are made to it.

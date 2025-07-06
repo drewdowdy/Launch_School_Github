@@ -176,6 +176,8 @@ end
 post '/new_doc' do
   require_user_sign_in
 
+  @title = 'New Document'
+
   new_file_name = params[:file_name] || ''
 
   if new_file_name.size.zero?
