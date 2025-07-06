@@ -164,7 +164,7 @@ post '/new_image' do
 end
 
 # Shows the new document page
-get '/create' do
+get '/new_doc' do
   require_user_sign_in
 
   @title = 'New Document'
@@ -173,7 +173,7 @@ get '/create' do
 end
 
 # Creates the new document in the data folder
-post '/create' do
+post '/new_doc' do
   require_user_sign_in
 
   new_file_name = params[:file_name] || ''

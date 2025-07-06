@@ -116,7 +116,7 @@ class CMSTest < Minitest::Test
   end
 
   def test_view_new_document_form
-    get "/create", {}, admin_session
+    get "/new_doc", {}, admin_session
 
     assert_equal 200, last_response.status
     assert_includes last_response.body, "<input"
@@ -124,14 +124,14 @@ class CMSTest < Minitest::Test
   end
 
   def test_view_new_document_form_signed_out
-    get "/create"
+    get "/new_doc"
 
     assert_equal 302, last_response.status
     assert_equal "You must be signed in to do that.", session[:message]
   end
 
   def test_create_new_document
-    post "/create", {file_name: "test.txt"}, admin_session
+    post "/new_doc", {file_name: "test.txt"}, admin_session
     assert_equal 302, last_response.status
     assert_equal "test.txt was created.", session[:message]
 
@@ -140,14 +140,14 @@ class CMSTest < Minitest::Test
   end
 
   def test_create_new_document_signed_out
-    post "/create", {file_name: "test.txt"}
+    post "/new_doc", {file_name: "test.txt"}
 
     assert_equal 302, last_response.status
     assert_equal "You must be signed in to do that.", session[:message]
   end
 
   def test_create_new_document_without_filename
-    post "/create", {file_name: ""}, admin_session
+    post "/new_doc", {file_name: ""}, admin_session
     assert_equal 422, last_response.status
     assert_includes last_response.body, "A name is required"
   end
@@ -210,17 +210,16 @@ class CMSTest < Minitest::Test
 
   # Validate that document names contain an extension that the application supports.
   def test_extension_name
-    post "/create", {file_name: "test.txt"}, admin_session
+    post "/new_doc", {file_name: "test.txt"}, admin_session
     assert_equal 302, last_response.status
     assert_equal "test.txt was created.", session[:message]
 
-    post "/create", {file_name: "test.md"}
+    post "/new_doc", {file_name: "test.md"}, admin_session
     assert_equal 302, last_response.status
     assert_equal "test.md was created.", session[:message]
     
-    post "/create", {file_name: "test"}
-    puts "DEBUG: Last response status: #{last_response.status}"
-    puts "DEBUG: Session message: #{session[:message].inspect}"
+    post "/new_doc", {file_name: "test"}, admin_session
+    puts "DEBUG: Session message: #{session[:message]}"
     assert_equal 422, last_response.status
     assert_equal "File extensions must be .txt or .md.", session[:message]
   end
