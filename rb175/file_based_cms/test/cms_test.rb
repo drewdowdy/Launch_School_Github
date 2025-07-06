@@ -116,7 +116,7 @@ class CMSTest < Minitest::Test
   end
 
   def test_view_new_document_form
-    get "/new", {}, admin_session
+    get "/create", {}, admin_session
 
     assert_equal 200, last_response.status
     assert_includes last_response.body, "<input"
@@ -124,7 +124,7 @@ class CMSTest < Minitest::Test
   end
 
   def test_view_new_document_form_signed_out
-    get "/new"
+    get "/create"
 
     assert_equal 302, last_response.status
     assert_equal "You must be signed in to do that.", session[:message]
@@ -214,11 +214,13 @@ class CMSTest < Minitest::Test
     assert_equal 302, last_response.status
     assert_equal "test.txt was created.", session[:message]
 
-    post "/create", {file_name: "test.md"}, admin_session
+    post "/create", {file_name: "test.md"}
     assert_equal 302, last_response.status
     assert_equal "test.md was created.", session[:message]
     
-    post "/create", {file_name: "test"}, admin_session
+    post "/create", {file_name: "test"}
+    puts "DEBUG: Last response status: #{last_response.status}"
+    puts "DEBUG: Session message: #{session[:message].inspect}"
     assert_equal 422, last_response.status
     assert_equal "File extensions must be .txt or .md.", session[:message]
   end

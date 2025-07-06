@@ -82,7 +82,7 @@ def hash_password(password)
 end
 
 def correct_extension?(file_name)
-  file_name.include?('.txt') || file_name.include?('.md')
+  ['.txt', '.md'].include?(File.extname(file_name))
 end
 
 def generate_copy_name(file_name)
@@ -164,12 +164,12 @@ post '/new_image' do
 end
 
 # Shows the new document page
-get '/new' do
+get '/create' do
   require_user_sign_in
 
   @title = 'New Document'
 
-  erb :new
+  erb :new_doc
 end
 
 # Creates the new document in the data folder
@@ -181,11 +181,11 @@ post '/create' do
   if new_file_name.size.zero?
     session[:message] = 'A name is required.'
     status 422
-    erb :new
+    erb :new_doc
   elsif !correct_extension?(new_file_name)
     session[:message] = 'File extensions must be .txt or .md.'
     status 422
-    erb :new
+    erb :new_doc
   else
     new_path = File.join(data_path, new_file_name)
     File.write(new_path, '')

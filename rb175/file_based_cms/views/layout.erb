@@ -7,14 +7,23 @@
     <link rel="stylesheet" href="/stylesheets/cms.css">
   </head>
   <body>
+    <h1><%= @title %></h1>
+
     <% if session[:message] %>
       <div class="flash message">
         <p><%= session.delete(:message) %></p>
       </div>
     <% end %>
-    <h1><%= @title %></h1>
+    
     <main>
       <%= yield %>
     </main>
+
+    <br><br>
+
+    <form action="/" method="get">
+      <button type="submit">Home</button>
+    </form>
+
   </body>
 </html>
