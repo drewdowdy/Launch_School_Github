@@ -235,11 +235,28 @@ class CMSTest < Minitest::Test
     post "/duplicate", {existing_file_name: "test.txt"}
     assert_equal true, File.exist?(File.join(data_path, "test_copy_2.txt"))
 
-    assert_includes File.join(data_path, "test_copy.txt"), "This is some text."
-    assert_includes File.join(data_path, "test_copy_2.txt"), "This is some text."
+    test_copy_content = File.read(File.join(data_path, "test_copy.txt"))
+    test_copy_2_content = File.read(File.join(data_path, "test_copy_2.txt"))
+
+    assert_includes test_copy_content, "This is some text."
+    assert_includes test_copy_2_content, "This is some text."
   end
 
   # Extend this project with a user signup form.
+  def test_user_signup
+    get "/users/signup"
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, "<p>Create a new username and password to login with.</p>"
+
+    post "users/signup", {username: "admin", password: ""}
+    assert_equal 422, last_response.status
+    assert_includes last_response.body, "Username is already taken. Choose a new one."
+
+    post "users/signup", {username: "henry", password: "henryspassword"}
+    assert_equal 302, last_response.status
+    assert_equal "You have successfully signed up.", session[:message]
+  end
+  
   # Add the ability to upload images to the CMS (which could be referenced within markdown files).
   # Modify the CMS so that each version of a document is preserved as changes are made to it.
 end
