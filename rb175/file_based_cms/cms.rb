@@ -143,8 +143,6 @@ end
 
 # Saves the image in the data folder
 post '/new_image' do
-  puts "DEBUG: params = #{params}"
-  puts "DEBUG: params[:image_upload] = #{params[:image_upload]}"
   if params[:image_upload] && params[:image_upload][:tempfile]
     uploaded_image = params[:image_upload]
     image_name = uploaded_image[:filename]
