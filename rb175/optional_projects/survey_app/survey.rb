@@ -85,18 +85,20 @@ def path(folder)
   end
 end
 
-def load_survey_questions
-  questions_path = if ENV["RACK_ENV"] == "test"
-    File.expand_path("../test/data/questions.yml", __FILE__)
+def load_data(file)
+  path = if ENV["RACK_ENV"] == "test"
+    File.expand_path("../test/data/#{file}", __FILE__)
   else
-    File.expand_path("../data/questions.yml", __FILE__)
+    File.expand_path("../data/#{file}", __FILE__)
   end
 
-  YAML.load_file(questions_path)
+  YAML.load_file(path)
 end
 
-def generate_user_id(file_name)
-  users = File.join(path('survey_data'))
+def generate_user_id
+  response_path = File.join(path('survey_data'), 'responses.yml')
+  user_ids = YAML.load_file(response_path).keys.map(&:to_i)
+  user_ids.max + 1
 end
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -109,13 +111,20 @@ end
 # Show the list of survey questions
 get '/questions' do
   @title = 'Survey'
-  @survey_questions = load_survey_questions
+  @survey_questions = load_data('questions.yml')
   erb :questions
 end
 
 # Saves the user's answers from the survey
 post '/questions' do
+  response_path = File.join(path('survey_data'), 'responses.yml')
+  all_responses = YAML.load_file(response_path)
   user_id = generate_user_id
+  response = params.to_h
+
+  all_responses[user_id] = response
+
+  File.write(response_path, all_responses.to_yaml)
 
   session[:message] = 'Thank you for completing the survey!'
   redirect '/'
