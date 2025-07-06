@@ -2,7 +2,10 @@
   <% @files.each do |file| %>
     <li>
       <a href="/<%= file %>"><%= file %></a>
-      <a href="/<%= file %>/edit"><button>edit</button></a>
+
+      <% if ['txt', 'md'].include?(file.split('.').last) %>
+        <a href="/<%= file %>/edit"><button>edit</button></a>
+      <% end %>
 
       <form class="inline" action="/duplicate" method="post">
         <input type="hidden" name="existing_file_name" value="<%= file %>">

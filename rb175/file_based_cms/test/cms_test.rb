@@ -256,7 +256,11 @@ class CMSTest < Minitest::Test
     assert_equal 302, last_response.status
     assert_equal "You have successfully signed up.", session[:message]
   end
-  
+
   # Add the ability to upload images to the CMS (which could be referenced within markdown files).
+  def test_upload_image
+    post "/new_image", {image_upload: "/Users/drewdowdy/Launch_School_Github/rb175/file_based_cms/test/JPG_Test.jpg"}, admin_session
+  end
+
   # Modify the CMS so that each version of a document is preserved as changes are made to it.
 end
