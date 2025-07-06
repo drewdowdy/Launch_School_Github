@@ -1,11 +1,17 @@
 ---
-0:
-  question_placeholder: answer_placeholder
 1:
   '1': 'Yes'
   '2': '1'
   '3': Sure
 2:
+  '1': 'No'
+  '2': '3'
+  '3': I don't know
+3:
   '1': 'Yes'
   '2': '3'
-  '3': Maybe
+  '3': 'No'
+4:
+  '1': 'No'
+  '2': '3'
+  '3': I don't know

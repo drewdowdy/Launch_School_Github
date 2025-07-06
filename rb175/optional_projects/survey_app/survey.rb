@@ -85,6 +85,10 @@ def path(folder)
   end
 end
 
+def response_path
+  File.join(path('survey_data'), 'responses.yml')
+end
+
 def load_data(file)
   path = if ENV["RACK_ENV"] == "test"
     File.expand_path("../test/data/#{file}", __FILE__)
@@ -95,10 +99,21 @@ def load_data(file)
   YAML.load_file(path)
 end
 
+def load_questions
+  load_data('questions.yml')
+end
+
+def load_responses
+  YAML.load_file(response_path) || {}
+end
+
 def generate_user_id
-  response_path = File.join(path('survey_data'), 'responses.yml')
   user_ids = YAML.load_file(response_path).keys.map(&:to_i)
-  user_ids.max + 1
+  if user_ids.empty?
+    1
+  else
+    user_ids.max + 1
+  end
 end
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -111,14 +126,13 @@ end
 # Show the list of survey questions
 get '/questions' do
   @title = 'Survey'
-  @survey_questions = load_data('questions.yml')
+  @survey_questions = load_questions
   erb :questions
 end
 
 # Saves the user's answers from the survey
 post '/questions' do
-  response_path = File.join(path('survey_data'), 'responses.yml')
-  all_responses = YAML.load_file(response_path)
+  all_responses = load_responses
   user_id = generate_user_id
   response = params.to_h
 
