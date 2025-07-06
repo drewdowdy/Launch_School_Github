@@ -272,4 +272,19 @@ class CMSTest < Minitest::Test
   end
 
   # Modify the CMS so that each version of a document is preserved as changes are made to it.
+  def test_file_versions
+    create_document("test.txt", "Original version content")
+
+    post "/test.txt", {file_name: "test.txt", content: "New version content"}, admin_session
+    assert_equal 302, last_response.status
+    assert_equal "test.txt has been updated.", session[:message]
+
+    version_1_path = File.join(version_path, "test_version_1.txt")
+    original_path = File.join(data_path, "test.txt")
+    file_exists = File.exist?(version_1_path)
+
+    assert_equal true, file_exists
+    assert_includes "Original version content", File.read(version_1_path)
+    assert_includes "New version content", File.read(original_path)
+  end
 end
