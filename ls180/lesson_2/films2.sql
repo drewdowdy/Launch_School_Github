@@ -36,4 +36,21 @@ INSERT INTO films
 -- ERROR:  new row for relation "films" violates check constraint "title_length"
 -- DETAIL:  Failing row contains (, 1960, horror, Alfred Hitchcock, 109).
 
+-- Drop the title_length constraint
+ALTER TABLE films DROP CONSTRAINT title_length;
 
+-- Ensure that all films added have years between 1900 and 2100
+ALTER TABLE films ADD CONSTRAINT year_range CHECK (year BETWEEN 1900 AND 2100);
+
+-- Ensure that all films have a director that is at least 3 characters long and has a space
+ALTER TABLE films
+  ADD CONSTRAINT director_name
+    CHECK (length(director) >= 3 AND director LIKE '% %');
+
+-- Try to update the director of "Die Hard" to "Johnny"
+UPDATE films
+  SET director = 'Johnny'
+  WHERE title = 'Die Hard';
+
+-- Q: List three ways to use the schema to restrict what values can be stored in a column.
+-- A: Data type, NOT NULL constraints, CHECK constraints
