@@ -350,6 +350,29 @@ SELECT T1.column_name, [, ... ]
 Examples
 
 ```sql
+-- Schemas are below --
+
+--                             Table "public.colors"
+--  Column |  Type   | Collation | Nullable |              Default               
+-- --------+---------+-----------+----------+------------------------------------
+--  id     | integer |           | not null | nextval('colors_id_seq'::regclass)
+--  color  | text    |           |          | 
+-- Indexes:
+--     "colors_pkey" PRIMARY KEY, btree (id)
+-- Referenced by:
+--     TABLE "shapes" CONSTRAINT "shapes_color_id_fkey" FOREIGN KEY (color_id) REFERENCES colors(id)
+
+--                                     Table "public.shapes"
+--   Column  |         Type          | Collation | Nullable |              Default               
+-- ----------+-----------------------+-----------+----------+------------------------------------
+--  id       | integer               |           | not null | nextval('shapes_id_seq'::regclass)
+--  color_id | integer               |           |          | 
+--  shape    | character varying(10) |           |          | 
+-- Foreign-key constraints:
+--     "shapes_color_id_fkey" FOREIGN KEY (color_id) REFERENCES colors(id)
+
+-- All rows from tables are below --
+
 SELECT * FROM colors;
 --  id | color  
 -- ----+--------
@@ -383,7 +406,7 @@ SELECT *
 
 SELECT *
   FROM colors
-  LEFT JOIN shapes ON colors.id = shapes.color_id;
+  LEFT OUTER JOIN shapes ON colors.id = shapes.color_id;
 --  id | color  | id | color_id |  shape   
 -- ----+--------+----+----------+----------
 --   1 | red    |  1 |        1 | square
@@ -395,7 +418,7 @@ SELECT *
 
 SELECT *
   FROM colors
-  RIGHT JOIN shapes ON colors.id = shapes.color_id;
+  RIGHT OUTER JOIN shapes ON colors.id = shapes.color_id;
 --  id | color | id | color_id |  shape   
 -- ----+-------+----+----------+----------
 --   1 | red   |  1 |        1 | square
@@ -406,7 +429,7 @@ SELECT *
 
 SELECT *
   FROM colors
-  FULL JOIN shapes ON colors.id = shapes.color_id;
+  FULL OUTER JOIN shapes ON colors.id = shapes.color_id;
 --  id | color  | id | color_id |  shape   
 -- ----+--------+----+----------+----------
 --   1 | red    |  1 |        1 | square
