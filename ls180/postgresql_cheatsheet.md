@@ -327,4 +327,115 @@ DELETE FROM table_name
 
 > Without a `WHERE` statement, **all rows** will be removed from the table.
 
+## Joining two tables together
 
+### `JOIN`
+
+The `JOIN` clause returns a transient table (aka a join table) based on the conditions of the join.
+
+```sql
+SELECT T1.column_name, [, ... ]
+  FROM T1
+  join_type JOIN T2 ON boolean_expression
+```
+
+| Join Type | Details |
+|-|-|
+| `INNER` | Combines rows from `T1` and `T2` wherever the `boolean_expression` evaluates to true. `INNER` is the default if no type is specified. |
+| `LEFT OUTER` | All rows from `T1` are included as well as any rows in `T2` where `boolean_expression` evaluates to true. `LEFT` implies an `OUTER` join if `OUTER` if omitted. |
+| `RIGHT OUTER` | All rows from `T2` are included as well as any rows in `T1` where `boolean_expression` evaluates to true. `RIGHT` implies an `OUTER` join if `OUTER` if omitted. |
+| `FULL OUTER` | `FULL` implies an `OUTER` join if `OUTER` if omitted. |
+| `CROSS` | Returns all posible combinations of rows from `T1` and `T2`. Does **not** need an `ON` condition. |
+
+Examples
+
+```sql
+SELECT * FROM colors;
+--  id | color  
+-- ----+--------
+--   1 | red
+--   2 | green
+--   3 | blue
+--   4 | yellow
+-- (4 rows)
+
+SELECT * FROM shapes;
+--  id | color_id |  shape   
+-- ----+----------+----------
+--   1 |        1 | square
+--   2 |        2 | triangle
+--   3 |        3 | circle
+--   4 |        1 | star
+-- (4 rows)
+
+-- Join tables are below --
+
+SELECT *
+  FROM colors
+  INNER JOIN shapes ON colors.id = shapes.color_id;
+--  id | color | id | color_id |  shape   
+-- ----+-------+----+----------+----------
+--   1 | red   |  1 |        1 | square
+--   2 | green |  2 |        2 | triangle
+--   3 | blue  |  3 |        3 | circle
+--   1 | red   |  4 |        1 | star
+-- (4 rows)
+
+SELECT *
+  FROM colors
+  LEFT JOIN shapes ON colors.id = shapes.color_id;
+--  id | color  | id | color_id |  shape   
+-- ----+--------+----+----------+----------
+--   1 | red    |  1 |        1 | square
+--   2 | green  |  2 |        2 | triangle
+--   3 | blue   |  3 |        3 | circle
+--   1 | red    |  4 |        1 | star
+--   4 | yellow |    |          | 
+-- (5 rows)
+
+SELECT *
+  FROM colors
+  RIGHT JOIN shapes ON colors.id = shapes.color_id;
+--  id | color | id | color_id |  shape   
+-- ----+-------+----+----------+----------
+--   1 | red   |  1 |        1 | square
+--   2 | green |  2 |        2 | triangle
+--   3 | blue  |  3 |        3 | circle
+--   1 | red   |  4 |        1 | star
+-- (4 rows)
+
+SELECT *
+  FROM colors
+  FULL JOIN shapes ON colors.id = shapes.color_id;
+--  id | color  | id | color_id |  shape   
+-- ----+--------+----+----------+----------
+--   1 | red    |  1 |        1 | square
+--   2 | green  |  2 |        2 | triangle
+--   3 | blue   |  3 |        3 | circle
+--   1 | red    |  4 |        1 | star
+--   4 | yellow |    |          | 
+-- (5 rows)
+
+SELECT *
+  FROM colors
+  CROSS JOIN shapes;
+--  id | color  | id | color_id |  shape   
+-- ----+--------+----+----------+----------
+--   1 | red    |  1 |        1 | square
+--   2 | green  |  1 |        1 | square
+--   3 | blue   |  1 |        1 | square
+--   4 | yellow |  1 |        1 | square
+--   1 | red    |  2 |        2 | triangle
+--   2 | green  |  2 |        2 | triangle
+--   3 | blue   |  2 |        2 | triangle
+--   4 | yellow |  2 |        2 | triangle
+--   1 | red    |  3 |        3 | circle
+--   2 | green  |  3 |        3 | circle
+--   3 | blue   |  3 |        3 | circle
+--   4 | yellow |  3 |        3 | circle
+--   1 | red    |  4 |        1 | star
+--   2 | green  |  4 |        1 | star
+--   3 | blue   |  4 |        1 | star
+--   4 | yellow |  4 |        1 | star
+-- (16 rows)
+```
