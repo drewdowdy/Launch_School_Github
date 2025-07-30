@@ -462,3 +462,60 @@ SELECT *
 --   4 | yellow |  4 |        1 | star
 -- (16 rows)
 ```
+
+## Adding Indexes
+
+
+
+### `CREATE INDEX`
+
+```sql
+CREATE INDEX [ index_name ] ON table_name (field_name, [ ,... ]);
+```
+
+### `DROP INDEX`
+
+```sql
+DROP INDEX index_name;
+```
+
+Example
+
+```sql
+
+```
+
+## Checking A Query Plan
+
+### `EXPLAIN`
+
+`EXPLAIN` gives an a plan of execution based on the schemas available.
+
+It does NOT actually execute the statements but provides estimations.
+
+```sql
+EXPLAIN sql_statement
+```
+### `ANALYZE`
+
+`ANALYZE` allows `EXPLAIN` to use the actual data in the tables.
+
+That means that the SQL statement is actually executed and run times will be available.
+
+```sql
+EXPLAIN ANALYZE sql_statement
+```
+
+## Subqueries
+
+### `EXISTS`
+
+### `IN`
+
+### `NOT IN`
+
+### `ANY` / `SOME`
+
+### `ALL`
+
+s
