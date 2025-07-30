@@ -101,3 +101,44 @@ SELECT services.description, count(customers_services.customer_id)
   LEFT JOIN customers_services ON services.id = customers_services.service_id
   GROUP BY services.description
   HAVING count(customers_services.customer_id) >= 3;
+
+-- 7. Total gross income
+
+SELECT sum(services.price)
+  FROM services
+  INNER JOIN customers_services
+    ON service_id = services.id;
+
+-- 8. Add new customer
+
+INSERT INTO customers(name, payment_token)
+  VALUES ('John Doe', 'EYODHLCN');
+
+INSERT INTO customers_services (customer_id, service_id)
+  VALUES (7, 1),
+         (7, 2),
+         (7, 3);
+
+-- 9. Hypothetically
+
+SELECT sum(services.price)
+  FROM services
+  INNER JOIN customers_services
+    ON service_id = services.id
+  WHERE services.price > 100;
+
+SELECT sum(services.price)
+  FROM customers
+  CROSS JOIN services
+  WHERE price > 100;
+
+-- 10. Deleting rows
+
+DELETE FROM customers_services
+  WHERE service_id = 7;
+
+DELETE FROM services
+  WHERE description = 'Bulk Email';
+
+DELETE FROM customers
+  WHERE name = 'Chen Ke-Hua';
