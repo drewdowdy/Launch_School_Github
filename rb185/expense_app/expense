@@ -2,4 +2,35 @@
 
 require "pg"
 
-puts "Hello World"
+def list_all_expenses
+  db = PG.connect(dbname: "expenses_app")
+
+  all_rows = db.exec "SELECT * FROM expenses ORDER BY created_on ASC;"
+
+  all_rows.each do |tuple|
+    puts "#{tuple['id'].rjust(2)} | #{tuple['created_on']} | #{tuple['amount'].rjust(7)} | #{tuple['memo']}"
+  end
+end
+
+def display_help
+  puts <<~HINT
+  An expense recording system
+
+  Commands:
+
+  add AMOUNT MEMO - record a new expense
+  clear - delete all expenses
+  list - list all expenses
+  delete NUMBER - remove expense with id NUMBER
+  search QUERY - list expenses with a matching memo field  
+  HINT
+end
+
+command = ARGV.first
+
+case command
+when 'list'
+  list_all_expenses
+else
+  display_help
+end
