@@ -2,10 +2,11 @@
 
 require "pg"
 
-def list_all_expenses
-  db = PG.connect(dbname: "expenses_app")
+CONNECTION = PG.connect(dbname: "expenses_app")
 
-  all_rows = db.exec "SELECT * FROM expenses ORDER BY created_on ASC;"
+def list_all_expenses
+
+  all_rows = CONNECTION.exec "SELECT * FROM expenses ORDER BY created_on ASC;"
 
   all_rows.each do |tuple|
     puts "#{tuple['id'].rjust(2)} | #{tuple['created_on']} | #{tuple['amount'].rjust(7)} | #{tuple['memo']}"
@@ -26,11 +27,21 @@ def display_help
   HINT
 end
 
+def add_new_expense(amount, memo)
+  CONNECTION.exec "INSERT INTO expenses (amount, memo) VALUES (#{amount}, '#{memo}');"
+  puts 'Expenses have been updated.'
+end
+
 command = ARGV.first
 
 case command
 when 'list'
   list_all_expenses
+when 'add'
+  amount = ARGV[1]
+  memo = ARGV[2]
+  abort 'You must provide an amount and memo.' unless amount && memo
+  add_new_expense(amount, memo)
 else
   display_help
 end
