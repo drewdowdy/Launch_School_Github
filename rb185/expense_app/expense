@@ -7,6 +7,12 @@ class ExpenseData
     @connection = PG.connect(dbname: "expenses_app")
   end
 
+  def list_all_expenses
+    sql = "SELECT * FROM expenses;"
+    all_rows = @connection.exec(sql)
+    display_items(all_rows)
+  end
+
   def add_new_expense(amount, memo)
     sql = %q(
     INSERT INTO expenses (amount, memo)
@@ -26,6 +32,20 @@ class ExpenseData
     matching_terms = @connection.exec_params(sql, ["%#{term}%"])
 
     display_items(matching_terms)
+  end
+
+  def delete_expense(id)
+    select_sql = "SELECT * FROM expenses WHERE id = $1"
+    removed_item = @connection.exec_params(select_sql, [id])
+    
+    if removed_item.ntuple == 1
+      delete_sql = "DELETE FROM expenses WHERE id = $1;"
+      @connection.exec_params(delete_sql, [id])
+      puts "The following item has been removed:"
+      display_items(removed_item)
+    else
+      puts "There is no item with id #{id}."
+    end
   end
 
   private
@@ -55,6 +75,8 @@ class CLI
       @application.add_new_expense(amount, memo)
     when 'search'
       @application.search_expenses(arguments[0])
+    when 'delete'
+      @application.delete_expense(arguments[0])
     else
       display_help
     end
