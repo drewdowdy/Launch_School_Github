@@ -28,7 +28,12 @@ def display_help
 end
 
 def add_new_expense(amount, memo)
-  CONNECTION.exec "INSERT INTO expenses (amount, memo) VALUES (#{amount}, '#{memo}');"
+  sql = %q(
+  INSERT INTO expenses (amount, memo)
+  VALUES ($1, $2);
+  )
+  CONNECTION.exec_params(sql, [amount, memo])
+
   puts 'Expenses have been updated.'
 end
 
