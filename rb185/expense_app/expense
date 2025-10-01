@@ -7,14 +7,6 @@ class ExpenseData
     @connection = PG.connect(dbname: "expenses_app")
   end
 
-  def list_all_expenses
-    all_rows = @connection.exec "SELECT * FROM expenses ORDER BY created_on ASC;"
-
-    all_rows.each do |tuple|
-      puts "#{tuple['id'].rjust(2)} | #{tuple['created_on']} | #{tuple['amount'].rjust(7)} | #{tuple['memo']}"
-    end
-  end
-
   def add_new_expense(amount, memo)
     sql = %q(
     INSERT INTO expenses (amount, memo)
@@ -23,6 +15,25 @@ class ExpenseData
     @connection.exec_params(sql, [amount, memo])
 
     puts 'Expenses have been updated.'
+  end
+
+  def search_expenses(term)
+    sql = %q(
+    SELECT * FROM expenses
+    WHERE memo ILIKE $1;
+    )
+
+    matching_terms = @connection.exec_params(sql, ["%#{term}%"])
+
+    display_items(matching_terms)
+  end
+
+  private
+
+  def display_items(result)
+    result.each do |tuple|
+      puts "#{tuple['id'].rjust(2)} | #{tuple['created_on']} | #{tuple['amount'].rjust(7)} | #{tuple['memo']}"
+    end
   end
 end
 
@@ -42,6 +53,8 @@ class CLI
       memo = arguments[1]
       abort 'You must provide an amount and memo.' unless amount && memo
       @application.add_new_expense(amount, memo)
+    when 'search'
+      @application.search_expenses(arguments[0])
     else
       display_help
     end
