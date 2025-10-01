@@ -5,7 +5,6 @@ require "pg"
 CONNECTION = PG.connect(dbname: "expenses_app")
 
 def list_all_expenses
-
   all_rows = CONNECTION.exec "SELECT * FROM expenses ORDER BY created_on ASC;"
 
   all_rows.each do |tuple|
