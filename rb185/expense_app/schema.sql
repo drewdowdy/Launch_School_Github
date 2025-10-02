@@ -29,5 +29,5 @@ ALTER TABLE expenses
 -- VALUES 
 -- (14.56, 'Pencils'),
 -- (3.29, 'Coffee'),
--- (49.99, 'Text Editor')
+-- (49.99, 'Text Editor'),
 -- (3.59, 'More coffee');

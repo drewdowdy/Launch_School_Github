@@ -11,7 +11,8 @@ class ExpenseData
   def list_all_expenses
     sql = "SELECT * FROM expenses;"
     all_rows = @connection.exec(sql)
-    display_items(all_rows)
+    display_count(all_rows)
+    display_items(all_rows) if all_rows.ntuples > 1
   end
 
   def add_new_expense(amount, memo)
@@ -32,7 +33,8 @@ class ExpenseData
 
     matching_terms = @connection.exec_params(sql, ["%#{term}%"])
 
-    display_items(matching_terms)
+    display_count(matching_terms)
+    display_items(matching_terms) if matching_terms.ntuples > 1
   end
 
   def delete_expense(id)
@@ -58,10 +60,26 @@ class ExpenseData
 
   private
 
+  def display_count(result)
+    case result.ntuples
+    when 0
+      puts 'There are no expenses.'
+    when 1 
+      puts "There is 1 expense."
+    else
+      puts "There are #{result.ntuples} expenses."
+    end
+  end
+
   def display_items(result)
     result.each do |tuple|
       puts "#{tuple['id'].rjust(2)} | #{tuple['created_on']} | #{tuple['amount'].rjust(7)} | #{tuple['memo']}"
     end
+
+    amount_sum = result.field_values('amount').map(&:to_f).sum
+
+    puts '-' * 50
+    puts "Total: #{format('%.2f', amount_sum).rjust(18)}"
   end
 end
 
@@ -79,6 +97,7 @@ class CLI
     when 'add'
       amount = arguments[0]
       memo = arguments[1]
+
       abort 'You must provide an amount and memo.' unless amount && memo
       @application.add_new_expense(amount, memo)
     when 'search'
@@ -88,6 +107,7 @@ class CLI
     when 'clear'
       puts 'This will remove all expenses. Are you sure? (y/n)'
       answer = $stdin.getch
+
       @application.delete_all_expenses if answer == 'y'
     else
       display_help
