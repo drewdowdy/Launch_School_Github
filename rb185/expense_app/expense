@@ -35,7 +35,7 @@ class ExpenseData
     matching_terms = @connection.exec_params(sql, ["%#{term}%"])
 
     display_count(matching_terms)
-    display_items(matching_terms) if matching_terms.ntuples > 1
+    display_items(matching_terms) if matching_terms.ntuples > 0
   end
 
   def delete_expense(id)
