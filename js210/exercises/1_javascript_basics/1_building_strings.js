@@ -9,7 +9,7 @@ const paragraph = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Susp
                 diam. Maecenas blandit aliquet ipsum. Integer vitae sapien sed nulla rutrum \   
                 hendrerit ac a urna. Interdum et malesuada fames ac ante ipsum primis in faucibus.';
 
-console.log(paragraph);
+console.log(paragraph); // SyntaxError: Invalid or unexpected token
 
 /*
 On line 9, there are whitespaces after the backslash (\).
