@@ -3,7 +3,15 @@ Write a function that logs the integers from 1 to 100 (inclusive) that are multi
 */
 
 function multiplesOfThreeAndFive() {
-
+  for (let currentNum = 3; currentNum <= 100; currentNum += 1) {
+    if(currentNum % 3 === 0 || currentNum % 5 === 0) {
+      if (currentNum % 3 === 0 && currentNum % 5 === 0) {
+        console.log(String(currentNum) + '!');
+      } else {
+        console.log(String(currentNum));
+      }
+    }
+  }
 }
 
 multiplesOfThreeAndFive();
@@ -15,6 +23,6 @@ output on console
 > '9'
 > '10'
 > '12'
-> '15!'
+> '15!' <-- has '!'
 … remainder of output omitted for brevity
 */
