@@ -1,0 +1,2 @@
+
+// message on the console
