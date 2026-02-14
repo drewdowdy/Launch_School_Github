@@ -82,22 +82,6 @@ function lastIndexOf(firstString, secondString) {
   return -1;
 }
 
-function lastIndexOf(firstString, secondString) {
-  let firstIndex = firstString.length - secondString.length;
-
-  for (let i = firstIndex; i >= 0; i -= 1) {
-    currentSubstring = makeSubstring(firstString, i, secondString.length)
-
-    if (currentSubstring === secondString) {
-      return i;
-    }
-  }
-
-  return -1;
-}
-
-
-
 /*
 === PROBLEM ===
 
@@ -116,12 +100,24 @@ search for a first index of
     return -1
 */
 
+function lastIndexOf(firstString, secondString) {
+  let firstIndex = firstString.length - secondString.length;
 
+  for (let i = firstIndex; i >= 0; i -= 1) {
+    currentSubstring = makeSubstring(firstString, i, secondString.length)
 
-// console.log(indexOf('Some strings', 's'));    // 5
-// console.log(indexOf('Blue Whale', 'Whale'));  // 5
-// console.log(indexOf('Blue Whale', 'Blute'));  // -1
-// console.log(indexOf('Blue Whale', 'leB'));    // -1
+    if (currentSubstring === secondString) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+console.log(indexOf('Some strings', 's'));    // 5
+console.log(indexOf('Blue Whale', 'Whale'));  // 5
+console.log(indexOf('Blue Whale', 'Blute'));  // -1
+console.log(indexOf('Blue Whale', 'leB'));    // -1
 
 console.log(lastIndexOf('Some strings', 's'));                  // 11
 console.log(lastIndexOf('Blue Whale, Killer Whale', 'Whale'));  // 19
