@@ -32,6 +32,9 @@ function isLeapYear(year) {
  return (year % 400 === 0) || (year % 4 === 0 && year % 100 !== 0);
 }
 
+// since the refactored line is one line, we can write as an arrow function
+const isLeapYear = (year) => (year % 400 === 0) || (year % 4 === 0 && year % 100 !== 0);
+
 console.log(isLeapYear(2016));      // true
 console.log(isLeapYear(2015));      // false
 console.log(isLeapYear(2100));      // false
