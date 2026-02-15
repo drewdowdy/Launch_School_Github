@@ -4,9 +4,19 @@ Write a function that computes the sum of all numbers between 1 and some other n
 You may assume that the number passed in is an integer greater than 1.
 */
 
+function multisum(number) {
+  let result = 0;
 
+  for (let i = 1; i <= number; i += 1) {
+    if (i % 3 === 0 || i % 5 === 0) {
+      result += i
+    }
+  }
 
-multisum(3);       // 3
-multisum(5);       // 8
-multisum(10);      // 33
-multisum(1000);    // 234168
+  return result;
+}
+
+console.log(multisum(3));       // 3
+console.log(multisum(5));       // 8
+console.log(multisum(10));      // 33
+console.log(multisum(1000));    // 234168
