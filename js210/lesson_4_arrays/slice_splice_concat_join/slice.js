@@ -5,8 +5,8 @@ You may use functions that were answers to previous practice problems to complet
 */
 
 function slice(array, startIndex, endIndex) {
-  sliceArray = [];
-  sliceIndex = 0;
+  let sliceArray = [];
+  let sliceIndex = 0;
 
   for (let i = startIndex; i < endIndex; i++) {
     sliceArray[sliceIndex] = array[i];
