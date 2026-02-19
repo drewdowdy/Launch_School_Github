@@ -4,7 +4,7 @@ Write a function named unshift that accepts two arguments: an Array and a value.
 
 function unshift(array, item) {
   for (let i = array.length; i > 0; i -= 1) {
-    array[i] = array[i - 1];
+    array[i] = array[i - 1]; // shift values right with extra spot
   }
 
   array[0] = item;
