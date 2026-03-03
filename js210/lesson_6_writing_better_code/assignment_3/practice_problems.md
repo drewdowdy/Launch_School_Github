@@ -10,7 +10,7 @@ let title = "The Three-Body Problem";
 
 #### Answer
 
-Strings should be wrapped in single quotes `''` unless they already contain single quotes within them.
+Strings should be wrapped in single quotes '' unless they already contain single quotes within them.
 
 ### 2.
 
@@ -22,9 +22,9 @@ let title = 'The Three-Body Problem',
 
 #### Answer
 
-Each variable declaration should have its own `let` to make the intention clearer.
+Each variable declaration should have its own let to make the intention clearer.
 
-Also, variables should use camelCase so `page_count` should be `pageCount`.
+Also, variables should use camelCase so page_count should be pageCount.
 
 ### 3.
 
@@ -34,7 +34,7 @@ let completed = lastPageRead == 400;
 
 #### Answer
 
-For equality check, we should use strict equality with a triple equal signs `===`.
+For equality check, we should use strict equality with a triple equal signs ===.
 
 ### 4.
 
@@ -45,7 +45,7 @@ if (finishedBook())
 
 #### Answer
 
-Multi-line blocks should be wrapped in curly braces `{}` but single line blocks don't have to be.
+Multi-line blocks should be wrapped in curly braces {} but single line blocks don't have to be.
 
 ### 5.
 
@@ -63,8 +63,9 @@ read(400);
 
 #### Answer
 
-1. For assignment and comparison, each sign (`=` or `<`) should have spaces before and after them.
-2. Indentations should be 2 spaces
-3. Avoid `++` or `--` in favor of `+=` and `-=`
-4. Show intention with type coersion `page` should be `String(page)`
-5. Use more distinct / descriptive variable names. `page` and `pages` are too similar. `page` could be `currentPage`.
+- For assignment and comparison, each sign (= or <) should have spaces before and after them.
+- Indentations should be 2 spaces
+- Avoid ++ or -- in favor of += and -=
+- Show intention with type coersion page should be String(page)
+- Use more distinct / descriptive variable names. page and pages are too similar. page could be currentPage.
+- 
