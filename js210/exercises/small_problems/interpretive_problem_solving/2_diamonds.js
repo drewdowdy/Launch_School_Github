@@ -33,21 +33,30 @@ add it to the beginning and end of result
 function diamond(size) {
   let result = [];
   let middleRow = Array(size).fill('*');
-
-  for (let spaceNum = 2; spaceNum < middleRow.length - 2; spaceNum += 2) {
-    let copy = middleRow.slice();
+  
+  result.push(middleRow);
+  
+  for (let spaceNum = 1; spaceNum <= Math.floor(size / 2); spaceNum += 1) {
+    let newRow = middleRow.slice();
     
-    let newRow = copy.splice(0, spaceNum, ' ');
-    newRow = newRow.splice(copy.length - spaceNum, spaceNum, ' ');
+    for (let i = 0; i < spaceNum; i += 1) {
+      newRow[i] = ' ';
+      newRow[(newRow.length - 1) - i] = ' ';
+    }
 
-    console.log(newRow);
+    result.push(newRow);
+    result.unshift(newRow);
+  }
+
+  for (let row of result) {
+    console.log(row.join(''));
   }
 }
 
-// diamond(1);
+diamond(1);
 // *
 
-// diamond(3);
+diamond(3);
 //  *
 // ***
 //  *
@@ -59,7 +68,7 @@ diamond(5);
 //  ***
 //   *
 
-// diamond(9);
+diamond(9);
     // *
   //  ***
   // *****
@@ -69,3 +78,5 @@ diamond(5);
   // *****
   //  ***
     // *
+
+diamond(21);
