@@ -229,9 +229,9 @@ loop do # main game loop
   ultimate_winner = nil
 
   if player_score == 5
-    ultimate_winner == 'Player'
+    ultimate_winner = 'Player'
   elsif dealer_score == 5
-    ultimate_winner == 'Dealer'
+    ultimate_winner = 'Dealer'
   end
 
   puts "The ultimate winner is #{ultimate_winner}!" if ultimate_winner
