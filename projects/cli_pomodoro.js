@@ -1,6 +1,6 @@
 let completedPomodoros = 0;
 
-process.on('SIGINT', () => {
+process.on('SIGINT', () => { // if CTRL+C is pressed...
   let pomodoros = completedPomodoros === 1 ? 'pomodoro' : 'pomodoros';
 
   console.log(`=== You completed ${completedPomodoros} ${pomodoros}. ===`);
