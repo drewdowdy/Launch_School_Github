@@ -28,6 +28,7 @@ const crunch = (string) => string.replace(/(.)\1+/g, '$1');
 | \1      | matches the result of capture group 1          |
 | +       | one or more instances of the preceeding match  |
 | g       | 'global' flag, all instances within the string |
+| $1      | result of capture group 1 (outside regex)      |
 */
 
 console.log(crunch('ddaaiillyy ddoouubbllee'));    // "daily double"
