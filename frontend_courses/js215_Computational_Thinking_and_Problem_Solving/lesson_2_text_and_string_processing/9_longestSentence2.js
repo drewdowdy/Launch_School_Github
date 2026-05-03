@@ -1,45 +1,33 @@
 /*
-PDBAD
-
-=== PROBLEM ===
-
-Write a function that logs the longest sentence from a text and the number of words in that longest sentence.
-
-Rules:
-- sentence: begin with any word character and end with `.`, `!`, or `?` (but ending punctuation is part of the sentence)
-- word: any character that's NOT (` `, `.`, `!`, or `?`) and delimited by one or more spaces
-
-=== DATA ===
-
-input: a very long string of sentences
-intermediate:
-  - regex
-  - array of sentences
-  - array of words
-output:
-  - a string that is the longest sentence
-  - a number that is the number of words in a sentence
-
-=== BRAINSTORM ===
-
-1. split the text into sentences
-2. determine the longest sentence
-
-use a regex to split the sentences apart
-also with the words from a sentence
-
+Feedback:
+Longest sentence is based on number of words, not characters:
+  check the reduce method
+Shortest possible sentence doesn't work
 */
 
-function parseSentences(text) {
-  return text.match(/(\S[^.!?]+[.!?])/g);
+// one or more characters that are not a space, `.`, `!`, or `?`
+const WORD_REGEX = '[^ .!?]+';
+
+// one or more instances of a word followed by 0 or more spaces followed by `.`, `!`, or `?`
+const SENTENCE_REGEX = `(${WORD_REGEX} *)+[.!?]`
+
+function parse(text, pattern) {
+  return text.match(pattern);
 }
 
-function parseWords(sentence) {
-  return sentence.match(/[^ .!?]+/g);
+function makeParser(pattern) { // the parsing helper functions were similar so I used partial function application
+  let regex = new RegExp(pattern, 'g');
+  return function (text) {
+    return parse(text, regex);
+  };
 }
+
+const parseWords = makeParser(WORD_REGEX);
+const parseSentences = makeParser(SENTENCE_REGEX);
 
 function longest(long, current) {
-  return long.length < current.length ? current : long
+  let [ longWords, currentWords ] = [parseWords(long), parseWords(current)];
+  return longWords.length < currentWords.length ? current : long; // check for number of words, not characters
 }
 
 function longestSentence(text) {
@@ -48,11 +36,13 @@ function longestSentence(text) {
   let maxSentence = sentences.reduce(longest);
   let maxWords = parseWords(maxSentence);
 
-  console.log(maxSentence, '');
-  console.log(`The longest sentence has ${maxWords.length} words.`);
+  console.log(maxSentence);
+  console.log('');
+  console.log(`The longest sentence has ${maxWords.length} word${maxWords.length === 1 ? '' : 's'}.`); // add 's' if more than 1
 }
 
-let longText = 'Four score and seven years ago our fathers brought forth' +
+let original1 = {
+  text: 'Four score and seven years ago our fathers brought forth' +
   ' on this continent a new nation, conceived in liberty, and' +
   ' dedicated to the proposition that all men are created' +
   ' equal.' +
@@ -80,16 +70,13 @@ let longText = 'Four score and seven years ago our fathers brought forth' +
   ' -- that this nation, under God, shall have a new birth' +
   ' of freedom -- and that government of the people, by' +
   ' the people, for the people, shall not perish from the' +
-  ' earth.';
+  ' earth.',
+  expected: 'It is rather for us to be here dedicated to the great task remaining before us -- that from these honored dead we take increased devotion to that cause for which they gave the last full measure of devotion -- that we here highly resolve that these dead shall not have died in vain -- that this nation, under God, shall have a new birth of freedom -- and that government of the people, by the people, for the people, shall not perish from the earth.',
+  count: 86,
+};
 
-longestSentence(longText);
-// It is rather for us to be here dedicated to the great task remaining before us -- that from these honored dead we take increased devotion to that cause for which they gave the last full measure of devotion -- that we here highly resolve that these dead shall not have died in vain -- that this nation, under God, shall have a new birth of freedom -- and that government of the people, by the people, for the people, shall not perish from the earth.
-
-// The longest sentence has 86 words.
-
-
-// Assuming the last sentence is removed:
-let anotherLongText = 'Four score and seven years ago our fathers brought forth' +
+let original2 = {
+  text: 'Four score and seven years ago our fathers brought forth' +
   ' on this continent a new nation, conceived in liberty, and' +
   ' dedicated to the proposition that all men are created' +
   ' equal.' +
@@ -108,9 +95,41 @@ let anotherLongText = 'Four score and seven years ago our fathers brought forth'
   ' what we say here, but it can never forget what they' +
   ' did here. It is for us the living, rather, to be dedicated' +
   ' here to the unfinished work which they who fought' +
-  ' here have thus far so nobly advanced.';
+  ' here have thus far so nobly advanced.',
+  expected: 'Four score and seven years ago our fathers brought forth on this continent a new nation, conceived in liberty, and dedicated to the proposition that all men are created equal.',
+  count: 30,
+}
 
-longestSentence(anotherLongText);
-// Four score and seven years ago our fathers brought forth on this continent a new nation, conceived in liberty, and dedicated to the proposition that all men are created equal.
+let test1 = {
+  text: '!!!I yam what I yam!',
+  expected: 'I yam what I yam!',
+  count: 5
+};
 
-// The longest sentence has 30 words.
+let test2 = {
+  text: 'To be or not to be? The brown fox is superlative!',
+  expected: 'To be or not to be?',
+  count: 6,
+}
+
+let test3 = {
+  text: 'The brown fox is superlative! To be or not to be?',
+  expected: 'To be or not to be?',
+  count: 6,
+}
+
+let test4 = {
+  text: 'I!',
+  expected: 'I!',
+  count: 1,
+}
+
+let tests = [original1, original2, test1, test2, test3, test4];
+
+for (test of tests) {
+  longestSentence(test.text);
+  console.log('===');
+  console.log(`Expected: ${test.expected}`);
+  console.log(`Count: ${test.count}`);
+  console.log('===');
+}
