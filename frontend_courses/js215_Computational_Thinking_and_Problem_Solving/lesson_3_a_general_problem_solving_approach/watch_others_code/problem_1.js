@@ -70,6 +70,10 @@ helper function removeSpecialChars
 
 if the number is 11 with a leading 1, remove the leading 1
 
+=== AFTERTHOUGHTS ===
+
+perhaps my way is too overengineered
+
 */
 
 function cleanUp(arr) {
