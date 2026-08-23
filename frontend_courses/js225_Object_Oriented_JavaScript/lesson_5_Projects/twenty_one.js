@@ -110,13 +110,13 @@ class Game {
   }
 
   setupGame() {
-    this.human.addCard(this.deck.getRandomCard());
-    this.human.addCard(this.deck.getRandomCard());
+    this.human.addCard(this.deck.deal());
+    this.human.addCard(this.deck.deal());
 
-    let hiddenCard = this.deck.getRandomCard();
+    let hiddenCard = this.deck.deal();
     hiddenCard.hidden = true;
     this.dealer.addCard(hiddenCard);
-    this.dealer.addCard(this.deck.getRandomCard());
+    this.dealer.addCard(this.deck.deal());
 
     this.displayHands();
   }
@@ -132,7 +132,7 @@ class Game {
     let move = player.move();
 
     while (move !== 'stay') {
-      player.addCard(this.deck.getRandomCard());
+      player.addCard(this.deck.deal());
       if (player.busted) return;
       
       this.displayHands();
@@ -169,7 +169,7 @@ class Deck {
     this.cards = shuffle(this.makeAllCards());
   }
 
-  getRandomCard() {
+  deal() {
     return this.cards.pop();
   }
   
