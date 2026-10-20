@@ -58,3 +58,30 @@ walk(document, (node) => {
     }
   }
 })
+
+// Following problems use this Wiki page:
+// https://en.wikipedia.org/wiki/Polar_bear
+
+// 5. Count the images on the page, then count the PNG images. Log both results.
+
+let imageNum = 0;
+let pngNum = 0;
+
+walk(document, (node) => {
+  if (node.nodeName === 'IMG') {
+    imageNum++;
+    let isPNG = /\.png$/.test(node.getAttribute('src'))
+    if (isPNG) pngNum++;
+  }
+})
+
+console.log(imageNum);
+console.log(pngNum);
+
+// 6. Change the link color to red for every link on the page.
+
+walk(document, (node) => {
+  if (node.nodeName === 'A') {
+    node.style.color = 'red';
+  }
+})
