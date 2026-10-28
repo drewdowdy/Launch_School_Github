@@ -1,0 +1,60 @@
+main.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Input Box</title>
+  <script src="./main.js"></script>
+</head>
+<body>
+  <div class="text-field">
+    <div class="content"></div>
+  </div>
+</body>
+</html>
+```
+
+main.css
+
+```css
+.text-field {
+  border: solid 1px #ccc;
+  padding: 1em;
+  cursor: pointer;
+  font-family: sans-serif;
+  font-size: 18px;
+  overflow: hidden;
+  width: 300px; 
+}
+
+.text-field .content {
+  display: inline-block;
+  height: 21px;
+  float: left;
+  white-space: pre;
+}
+
+.text-field.focused {
+  border-color: black;
+}
+
+.text-field.cursor .content {
+  border-right: solid 2px black;
+}
+```
+
+main.js
+
+```javascript
+document.addEventListener('DOMContentLoaded', () => {
+  let textField = document.querySelector('#text-field');
+
+  textField.addEventListener('click', (event) => {
+    textField.classList.add('focused');
+  })
+})
+
+```
