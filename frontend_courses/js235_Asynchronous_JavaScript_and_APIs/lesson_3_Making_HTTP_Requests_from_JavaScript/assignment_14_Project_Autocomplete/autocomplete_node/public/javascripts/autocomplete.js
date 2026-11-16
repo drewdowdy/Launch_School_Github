@@ -1,12 +1,39 @@
-const Autocomplete = {
-  wrapInput: function() {
+import debounce from './debounce.js';
+
+class Autocomplete {
+  constructor (input, url) {
+    this.input = input;
+    this.url = url;
+
+    this.listUI = null;
+    this.overlay = null;
+
+    this.visible = false;
+    this.matches = [];
+    this.selectedIndex = null;
+    this.previousValue = null;
+    this.bestMatchIndex = null;
+
+    this.wrapInput();
+    this.createUI();
+    this.valueChanged = debounce(this.valueChanged.bind(this), 300);
+    this.bindEvents();
+  }
+
+  bindEvents() {
+    this.input.addEventListener('input', this.valueChanged);
+    this.input.addEventListener('keydown', this.handleKeydown.bind(this));
+    this.listUI.addEventListener('mousedown', this.handleMousedown.bind(this));
+  }
+
+  wrapInput() {
     let wrapper = document.createElement('div');
     wrapper.classList.add('autocomplete-wrapper');
     this.input.parentNode.appendChild(wrapper);
     wrapper.appendChild(this.input);
-  },
+  }
 
-  createUI: function() {
+  createUI() {
     let listUI = document.createElement('ul');
     listUI.classList.add('autocomplete-ui');
     this.input.parentNode.appendChild(listUI);
@@ -14,34 +41,13 @@ const Autocomplete = {
 
     let overlay = document.createElement('div');
     overlay.classList.add('autocomplete-overlay');
-    overlay.style.width = `${this.input.clientWidth}px`;
+    overlay.style.width = this.input.clientWidth + 'px';
 
     this.input.parentNode.appendChild(overlay);
     this.overlay = overlay;
-  },
+  }
 
-  bindEvents: function() {
-    this.input.addEventListener('input', this.valueChanged.bind(this));
-    this.input.addEventListener('keydown', this.handleKeydown.bind(this));
-    this.listUI.addEventListener('mousedown', this.handleMousedown.bind(this));
-  },
-
-  valueChanged: async function() {
-    let value = this.input.value;
-    this.previousValue = value;
-
-    if (value.length > 0) {
-      this.matches = await this.fetchMatches(value);
-      this.visible = true;
-      this.bestMatchIndex = 0;
-      this.selectedIndex = null;
-      this.draw();
-    } else {
-      this.reset();
-    }
-  },
-
-  draw: function() {
+  draw() {
     while (this.listUI.lastChild) {
       this.listUI.removeChild(this.listUI.lastChild);
     }
@@ -70,30 +76,20 @@ const Autocomplete = {
       li.textContent = match.name;
       this.listUI.appendChild(li);
     });
-  },
+  }
 
-  generateOverlayContent: function(value, match) {
-    let end = match.name.slice(value.length);
+  generateOverlayContent(value, match) {
+    let end = match.name.substr(value.length);
     return value + end;
-  },
+  }
 
-  fetchMatches: async function(query) {
+  async fetchMatches(query) {
     let response = await fetch(`${this.url}${encodeURIComponent(query)}`);
     let data = await response.json();
     return data;
-  },
+  }
 
-  reset: function() {
-    this.visible = false;
-    this.matches = [];
-    this.bestMatchIndex = null;
-    this.selectedIndex = null;
-    this.previousValue = null;
-
-    this.draw();
-  },
-
-  handleKeydown: function(event) {
+  handleKeydown(event) {
     switch (event.key) {
       case 'ArrowDown':
         event.preventDefault();
@@ -130,35 +126,41 @@ const Autocomplete = {
         this.reset();
         break;
     }
-  },
+  }
 
-  handleMousedown: function(event) {
+  handleMousedown(event) {
     let element = event.target;
     this.input.value = element.textContent;
     this.reset();
-  },
+  }
 
-  init: function() {
-    this.input = document.querySelector('input');
-    this.url = '/countries?matching=';
-
-    this.listUI = null;
-    this.overlay = null;
-
+  reset() {
     this.visible = false;
     this.matches = [];
-    this.bestMatchIndex = null;
     this.selectedIndex = null;
     this.previousValue = null;
+    this.bestMatchIndex = null;
 
-    this.wrapInput();
-    this.createUI();
-
-    this.bindEvents();
-    this.reset();
+    this.draw();
   }
-};
+
+  async valueChanged() {
+    let value = this.input.value;
+    this.previousValue = value;
+
+    if (value.length > 0) {
+      this.matches = await this.fetchMatches(value);
+      this.visible = true;
+      this.bestMatchIndex = 0;
+      this.selectedIndex = null;
+      this.draw();
+    } else {
+      this.reset();
+    }
+  }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
-  Autocomplete.init();
+  let input = document.querySelector('input');
+  let autocomplete = new Autocomplete(input, "/countries?matching=");
 });
